@@ -48,10 +48,10 @@ class Square {
         square.stroke()
       }else if(this.borderColor===undefined && this.round !==undefined){
       
-        square.shadowColor = "rgba(255, 0, 0, .8)";
-        square.shadowBlur = 8;
-        square.shadowOffsetX = 30;
-        square.shadowOffsetY = 20;
+        // square.shadowColor = "rgba(255, 0, 0, .8)";
+        // square.shadowBlur = 8;
+        // square.shadowOffsetX = 30;
+        // square.shadowOffsetY = 20;
         console.log(this.round !==undefined)
         square.fillStyle = this.fillStyle
         square.roundRect(this.x,this.y,this.width,this.height, this.round)
