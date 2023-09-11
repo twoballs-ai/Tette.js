@@ -94,15 +94,29 @@ let ellipse = new te.Ellipse(
 ellipse.ellipseAdd()
 
 let img = new Image();
+img.onload = function() {
+	let image = new te.Image(
+        {   img:img,
+            dx: 400,
+            dy: 500,
+        }
+    );
+    image.imageAdd()
+};
 img.src = "user_js/img/pic_the_scream.jpg";
-console.log(img)
-let image = new te.Image(
-    {   img:img,
-        dx: 400,
-        dy: 500,
+
+
+let text = new te.Text(
+    {
+        x: 200,
+        y: 200,
+        text: "я сюда напишу что хочу",
+        fontsize: 400,
+        color: "green"
     }
 );
-image.imageAdd()
+text.textAdd()
+
 // let firstLayer = new te.Layer()
 // firstLayer.drawLayer(square)
 

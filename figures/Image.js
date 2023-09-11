@@ -11,7 +11,6 @@ class Image {
     imageAdd() {
       let image =  context
       image.drawImage(this.img, this.dx, this.dy);
-      console.log(this.img)
       return image
     }
   
