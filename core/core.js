@@ -5,6 +5,7 @@ import { Circle } from '../figures/Circle.js';
 import { Ellipse } from '../figures/Ellipse.js';
 import { Image } from '../figures/Image.js';
 import { Text } from '../figures/Text.js';
+import { Line } from '../figures/Line.js';
 const context = new Context().getContext()
 const canvas = new Context().getCanvas()
 
@@ -55,4 +56,4 @@ function draw() {
 
 
 
-export { draw, Square, Circle, Scene, Layer, Ellipse, Image, Text }
+export { draw, Square, Circle, Scene, Layer, Ellipse, Image, Text, Line }

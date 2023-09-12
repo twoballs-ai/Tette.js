@@ -117,6 +117,19 @@ let text = new te.Text(
 );
 text.textAdd()
 
+let line = new te.Line(
+    {
+        x1: 200,
+        y1: 150,
+        x2: 400,
+        y2: 500,
+        lineRounded: "round",
+        widthline:90,
+        color: "grey",
+    }
+);
+line.lineAdd()
+
 // let firstLayer = new te.Layer()
 // firstLayer.drawLayer(square)
 
