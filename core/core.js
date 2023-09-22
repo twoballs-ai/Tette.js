@@ -1,11 +1,12 @@
 import {Context} from './Context.js';
 
-import { Square } from '../figures/square.js';
-import { Circle } from '../figures/Circle.js';
-import { Ellipse } from '../figures/Ellipse.js';
-import { Image } from '../figures/Image.js';
-import { Text } from '../figures/Text.js';
-import { Line } from '../figures/Line.js';
+import { Square } from './figures/square.js';
+import { Circle } from './figures/Circle.js';
+import { Ellipse } from './figures/Ellipse.js';
+import { Image } from './figures/Image.js';
+import { Text } from './figures/Text.js';
+import { Line } from './figures/Line.js';
+import { Events } from './functions/Events.js';
 const context = new Context().getContext()
 const canvas = new Context().getCanvas()
 
@@ -56,4 +57,4 @@ function draw() {
 
 
 
-export { draw, Square, Circle, Scene, Layer, Ellipse, Image, Text, Line }
+export { draw, Events, Square, Circle, Scene, Layer, Ellipse, Image, Text, Line }

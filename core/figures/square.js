@@ -1,5 +1,7 @@
-import {Context} from '../core/Context.js'
+import {Context} from '../Context.js'
 const context = new Context().getContext()
+
+
 class Square {
 
     constructor(obj) {

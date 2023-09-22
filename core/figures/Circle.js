@@ -1,4 +1,4 @@
-import {Context} from '../core/Context.js'
+import {Context} from '../Context.js'
 const context = new Context().getContext()
 class Circle {
 
@@ -19,6 +19,10 @@ class Circle {
       circle.fill();
       return circle
     }
+
+    clear() {
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  }
   
   }
 
