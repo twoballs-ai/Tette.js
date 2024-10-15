@@ -1,31 +1,22 @@
-// webpack.config.js
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './TETTE_CORE/index.js', // Точка входа в сборку
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-  },
-  devServer: {
-    contentBase: './dist',
-    hot: true,
+    filename: 'tette.bundle.js', // Имя файла, который будет использовать пользователь
+    library: 'TETTE', // Экспортируемое имя глобальной переменной
+    libraryTarget: 'umd', // Universal Module Definition для использования в разных окружениях
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
+        test: /\.js$/, // Обрабатываем все JS-файлы
+        exclude: /node_modules/, // Не включаем node_modules
         use: {
           loader: 'babel-loader',
         },
       },
     ],
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: './src/index.html',
-    }),
-  ],
 };
