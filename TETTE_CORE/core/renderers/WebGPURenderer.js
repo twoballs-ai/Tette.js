@@ -1,6 +1,6 @@
 // TETTE_CORE/renderers/WebGPURenderer.js
 
-import { Renderer } from '../core/core_logic/Renderer.js';
+import { Renderer } from '../core_logic/Renderer.js';
 
 export class WebGPURenderer extends Renderer {
   constructor() {
