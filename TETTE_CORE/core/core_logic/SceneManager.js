@@ -4,10 +4,16 @@ export class SceneManager {
       this.currentScene = null; // Текущая сцена
   }
 
-  createScene(name) {
-      this.scenes[name] = { gameObjects: [] };
-      console.log(`Сцена "${name}" создана.`);
-  }
+  createScene(...names) {
+    names.forEach(name => {
+        if (!this.scenes[name]) {
+            this.scenes[name] = { gameObjects: [] };
+            console.log(`Сцена "${name}" создана.`);
+        } else {
+            console.warn(`Сцена "${name}" уже существует.`);
+        }
+    });
+}
 
   changeScene(name) {
       if (this.scenes[name]) {

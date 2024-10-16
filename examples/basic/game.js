@@ -14,6 +14,8 @@ const game = new Core({
   sceneManager: sceneManager,
 });
 
+sceneManager.createScene('level1','level2');
+
 // Уровень 1
 const playerLevel1 = shape2d.square({
   x: 100,
@@ -62,7 +64,7 @@ ellipseObj.update = function(deltaTime) {
   }
 };
 
-sceneManager.createScene('level1');
+
 sceneManager.addGameObjectToScene('level1', playerLevel1, player2Level1, ellipseObj);
 
 // Уровень 2
@@ -116,7 +118,7 @@ myImage.onload = () => {
 //   height: 400
 // });
 
-sceneManager.createScene('level2');
+// sceneManager.createScene('level2');
 sceneManager.addGameObjectToScene('level2',  playerLevel2, myText);
 // sceneManager.addGameObjectToScene('level2', mySprite);
 
