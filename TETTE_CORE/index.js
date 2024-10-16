@@ -2,9 +2,9 @@
 
 // Экспортируем основные компоненты ядра
 export { Core } from './core/core_logic/core.js';
-export { SceneManager } from './core/core_logic/sceneManager.js';
+export { SceneManager } from './core/core_logic/SceneManager.js';
 export { GameObject } from './core/core_logic/gameObject.js';
-export { Context } from './core/core_logic/context.js';
+export { Context } from './core/core_logic/Сontext.js';
 
 // Экспортируем фигуры
 export { Square } from './core/figures/square.js';

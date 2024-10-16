@@ -1,5 +1,5 @@
-import { Context } from './context.js';
-import { SceneManager } from './sceneManager.js';
+import { Context } from './Сontext.js';
+import { SceneManager } from './SceneManager.js';
 
 export class Core {
   constructor(canvasId, backgroundColor = 'black', renderType = '2d', initialSceneName = 'main', controlType = 'keyboard') {
@@ -45,10 +45,12 @@ export class Core {
   }
 
   createScene(sceneName) {
-    this.sceneManager.createScene(sceneName);
+    if (!this.sceneManager.scenes[sceneName]) {
+      this.sceneManager.createScene(sceneName);
+      console.log(`Scene "${sceneName}" created.`);
+    }
     this.changeScene(sceneName);
   }
-
   changeScene(sceneName) {
     this.sceneManager.changeScene(sceneName);
   }
@@ -87,7 +89,10 @@ export class Core {
   }
 
   start() {
-    this.lastTime = performance.now();
-    requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
+    if (!this.loopRunning) {
+      this.loopRunning = true;  // Устанавливаем флаг, чтобы предотвратить дублирование цикла
+      this.lastTime = performance.now();
+      requestAnimationFrame((timestamp) => this.gameLoop(timestamp));
+    }
   }
 }
