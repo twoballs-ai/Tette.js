@@ -10,7 +10,7 @@ const sceneManager = new SceneManager();
 const game = new Core({
   canvasId: 'canvas',
   renderType: '2d',
-  backgroundColor: 'black',
+  backgroundColor: '#333',
   sceneManager: sceneManager,
 });
 
@@ -63,9 +63,8 @@ ellipseObj.update = function(deltaTime) {
 };
 
 sceneManager.createScene('level1');
-sceneManager.addGameObjectToScene('level1', playerLevel1);
-sceneManager.addGameObjectToScene('level1', player2Level1);
-sceneManager.addGameObjectToScene('level1', ellipseObj);
+sceneManager.addGameObjectToScene('level1', playerLevel1, player2Level1, ellipseObj);
+
 // Уровень 2
 const playerLevel2 = shape2d.rectangle({
   x: 50,
@@ -82,8 +81,44 @@ playerLevel2.update = function(deltaTime) {
   }
 };
 
+
+const myText = shape2d.text({
+  text: 'Данила и дёма',
+  x: 100,
+  y: 50,
+  fontsize: 76,
+  color: 'green',
+  fontFamily: 'Verdana',
+  borderColor: 'black',
+  borderWidth: 1
+});
+const myImage = new Image(); // Создаём новый объект Image
+myImage.src = './raketa.png';
+
+myImage.onload = () => {
+  const mySprite = shape2d.sprite({
+    image: myImage, // Используем загруженное изображение
+    x: 100,
+    y: 150,
+    width:300,
+    height: 200,
+    // preserveAspectRatio: true,
+  });
+
+  // Добавляем спрайт в уровень 2
+  sceneManager.addGameObjectToScene('level2', mySprite);
+};
+// const mySprite = shape2d.sprite({
+//   image: myImage, // Загрузите изображение перед использованием
+//   x: 100,
+//   y: 150,
+//   width: 300,
+//   height: 400
+// });
+
 sceneManager.createScene('level2');
-sceneManager.addGameObjectToScene('level2', playerLevel2);
+sceneManager.addGameObjectToScene('level2',  playerLevel2, myText);
+// sceneManager.addGameObjectToScene('level2', mySprite);
 
 // Начинаем с уровня 1
 sceneManager.changeScene('level1');

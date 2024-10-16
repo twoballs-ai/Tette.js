@@ -1,18 +1,28 @@
-import { Context } from '../Context.js'
-const context = new Context().getContext()
+import { GameObject } from '../core/core_logic/gameObject.js';
 
-class Sprite {
-    constructor(options) {
-        this.image = obj.image;
-        this.width = obj.width;
-        this.height = obj.height;
+export class Sprite extends GameObject {
+    constructor(image, x, y, width, height, preserveAspectRatio = false) {
+        super(x, y, width, height);
+        this.image = image;
+        this.preserveAspectRatio = preserveAspectRatio;
+    } 
+
+    // Метод для рендеринга спрайта
+    render(context) {
+        if (this.image.complete) { // Проверяем, загружено ли изображение
+            let renderWidth = this.width;
+            let renderHeight = this.height;
+
+            if (this.preserveAspectRatio) {
+                const aspectRatio = this.image.width / this.image.height;
+                if (this.width / this.height > aspectRatio) {
+                    renderWidth = this.height * aspectRatio;
+                } else {
+                    renderHeight = this.width / aspectRatio;
+                }
+            }
+
+            context.drawImage(this.image, this.x, this.y, renderWidth, renderHeight);
+        }
     }
-
-    spriteAdd() {
-        let image =  context
-        image.drawImage(this.img, this.dx, this.dy);
-        return image
-      }
 }
-
-export { Sprite }

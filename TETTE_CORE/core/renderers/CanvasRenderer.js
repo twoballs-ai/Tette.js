@@ -1,14 +1,19 @@
-// CanvasRenderer.js
 import { Renderer } from '../core_logic/Renderer.js';
 
 export class CanvasRenderer extends Renderer {
-  constructor(graphicalContext) {
+  constructor(graphicalContext, backgroundColor) { // Удален цвет по умолчанию
     super(graphicalContext);
+    this.backgroundColor = backgroundColor; // Устанавливаем переданный цвет фона
+    if (!this.backgroundColor) {
+      throw new Error('Background color is required for CanvasRenderer.'); // Ошибка, если цвет фона не передан
+    }
   }
 
-  // Очищаем экран
+  // Очищаем экран и устанавливаем фон
   clear() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // Заливаем фон
+    this.context.fillStyle = this.backgroundColor; // Используем переданный цвет фона
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height); // Заливаем весь канвас
   }
 
   // Рендерим объекты сцены

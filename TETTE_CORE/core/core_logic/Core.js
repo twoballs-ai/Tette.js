@@ -5,10 +5,9 @@ export class Core {
     // Создаем графический контекст
     this.graphicalContext = new GraphicalContext(canvasId, renderType);
     
-    // Передаем графический контекст в рендерер
-    this.renderer = new CanvasRenderer(this.graphicalContext);
+    // Передаем графический контекст и цвет фона в рендерер
+    this.renderer = new CanvasRenderer(this.graphicalContext, backgroundColor);
     
-    this.backgroundColor = backgroundColor;
     this.sceneManager = sceneManager;
     this.lastTime = 0;
     this.loop = this.loop.bind(this); // Привязываем метод цикла

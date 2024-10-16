@@ -1,25 +1,34 @@
-import { Context } from '../Context.js'
-const context = new Context().getContext()
-class Text {
+import { GameObject } from '../core/core_logic/gameObject.js';
 
-    constructor(obj) {
-        this.text = obj.text
-        this.x = obj.x
-        this.y = obj.y
-        this.fontsize =obj.fontsize
-        this.color = obj.color
+export class Text extends GameObject {
+  constructor(text, x, y, fontsize = 16, color = 'black', fontFamily = 'Arial', borderColor = null, borderWidth = 0) {
+    // Передаем координаты и цвет в конструктор базового класса
+    super(x, y, 0, 0, color);
+    this.text = text;
+    this.fontsize = fontsize;
+    this.fontFamily = fontFamily;
+    this.borderColor = borderColor;
+    this.borderWidth = borderWidth;
+  }
+
+  // Метод для рендеринга текста
+  render(context) {
+    context.beginPath();
+
+    // Устанавливаем шрифт и цвет текста
+    context.font = `${this.fontsize}px ${this.fontFamily}`;
+    context.fillStyle = this.color;
+    
+    // Отрисовываем текст
+    context.fillText(this.text, this.x, this.y);
+
+    // Если есть граница, рисуем её
+    if (this.borderColor && this.borderWidth > 0) {
+      context.strokeStyle = this.borderColor;
+      context.lineWidth = this.borderWidth;
+      context.strokeText(this.text, this.x, this.y);
     }
 
-    textAdd() {
-        let text =  context
-        text.beginPath();
-        text.font = `${this.fontsize}px Arial`;
-        text.fillStyle = this.color;
-        text.fillText(this.text,this.x,this.y);
-        return text
-    }
-
+    context.closePath();
+  }
 }
-
-
-export { Text }
