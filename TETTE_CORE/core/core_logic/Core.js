@@ -1,30 +1,23 @@
 import { GraphicalContext } from './GraphicalContext.js';
-import { CanvasRenderer } from '../renderers/CanvasRenderer.js';
+
 export class Core {
   constructor({ canvasId, renderType = '2d', backgroundColor = 'black', sceneManager }) {
-    // Создаем графический контекст
-    this.graphicalContext = new GraphicalContext(canvasId, renderType);
-    
-    // Передаем графический контекст и цвет фона в рендерер
-    this.renderer = new CanvasRenderer(this.graphicalContext, backgroundColor);
-    
+    this.graphicalContext = new GraphicalContext(canvasId, renderType, backgroundColor); // Передаем цвет фона
+    this.renderer = this.graphicalContext.getRenderer();
     this.sceneManager = sceneManager;
     this.lastTime = 0;
-    this.loop = this.loop.bind(this); // Привязываем метод цикла
+    this.loop = this.loop.bind(this);
   }
 
   start() {
-    requestAnimationFrame(this.loop); // Запуск игрового цикла
+    requestAnimationFrame(this.loop);
   }
 
   loop(timestamp) {
     const deltaTime = timestamp - this.lastTime;
     this.lastTime = timestamp;
 
-    // Обновляем сцену
     this.sceneManager.update(deltaTime);
-
-    // Рендерим текущую сцену
     this.renderer.render(this.sceneManager.getCurrentScene());
 
     requestAnimationFrame(this.loop);

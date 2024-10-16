@@ -1,15 +1,19 @@
+import { CanvasRenderer } from '../renderers/CanvasRenderer.js';
+import { WebGLRenderer } from '../renderers/WebGLRenderer.js';
+import { WebGPURenderer } from '../renderers/WebGPURenderer.js';
+
 export class GraphicalContext {
-    constructor(canvasId = 'canvas', type = '2d') {
+    constructor(canvasId = 'canvas', type = '2d', backgroundColor = 'black') {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) {
             throw new Error(`Canvas with id ${canvasId} not found!`);
         }
-        
+
         this.context = this.initializeContext(type);
+        this.renderer = this.createRenderer(type, backgroundColor); // Передаем цвет фона
     }
 
     initializeContext(type) {
-        // Определение типа контекста рендеринга
         if (type === '2d') {
             return this.canvas.getContext('2d');
         } else if (type === 'webgl') {
@@ -25,11 +29,27 @@ export class GraphicalContext {
         }
     }
 
+    createRenderer(type, backgroundColor) {
+        if (type === '2d') {
+            return new CanvasRenderer(this, backgroundColor); // Передаем цвет фона
+        } else if (type === 'webgl') {
+            return new WebGLRenderer(this, backgroundColor); // Передаем цвет фона
+        } else if (type === 'webgpu') {
+            return new WebGPURenderer(this, backgroundColor); // Передаем цвет фона
+        } else {
+            throw new Error('Unsupported render type: ' + type);
+        }
+    }
+
     getContext() {
         return this.context;
     }
 
     getCanvas() {
         return this.canvas;
+    }
+
+    getRenderer() {
+        return this.renderer; // Метод для получения рендерера
     }
 }
