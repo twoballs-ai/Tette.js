@@ -3,7 +3,7 @@ import { Core } from '../../TETTE_CORE/core/core_logic/Core.js';
 import { getShape2d } from '../../TETTE_CORE/gameObjects/shapes/shape2d.js';
 import { SceneManager } from '../../TETTE_CORE/core/core_logic/SceneManager.js';
 
-const renderType = '2d'; // Change to '2d' or 'webgl' as needed
+const renderType = 'webgl'; // Change to '2d' or 'webgl' as needed
 
 // Get shape2d object configured with renderType
 const shape2d = getShape2d(renderType);
@@ -28,7 +28,7 @@ const playerLevel1 = shape2d.rectangle({
   y: 100,
   width: 50,
   height: 100,
-  color: 'green',
+  color: 'rgb(10, 105, 30)',
 });
 
 playerLevel1.update = function(deltaTime) {

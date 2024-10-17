@@ -27,7 +27,7 @@ const playerLevel1 = shape2d.square({
   x: 100,
   y: 100,
   size: 50,
-  color: 'red',
+  color: 'rgb(10, 105, 30)',
 });
 
 playerLevel1.update = function(deltaTime) {

@@ -15,7 +15,7 @@ export class WebGLRenderer extends Renderer {
 
   initializeWebGL() {
     // Устанавливаем цвет очистки экрана
-    const [r, g, b] = this.hexToRgb(this.backgroundColor);
+    const [r, g, b] = this.backgroundColor; // backgroundColor уже нормализован через ColorMixin
     this.context.clearColor(r, g, b, 1.0);
     this.context.enable(this.context.DEPTH_TEST);
     this.context.depthFunc(this.context.LEQUAL);
