@@ -7,11 +7,11 @@ export { GameObject } from './core/core_logic/gameObject.js';
 export { GraphicalContext } from './core/core_logic/GraphicalContext.js';
 
 // Экспортируем фигуры
-export { Rectangle } from './shapes/Rectangle.js';
-export { Circle } from './shapes/Circle.js';
+export { Rectangle } from './gameObjects/shapes/2d/Rectangle.js';
+export { Circle } from './gameObjects/shapes/2d/Circle.js';
 // export { Line } from './core/figures/Line.js';
 // export { Ellipse } from './core/figures/Ellipse.js';
-export { shape2d } from './shapes/shape2d.js';
+export { shape2d } from './gameObjects/shapes/2d/shape.js';
 
 // Экспортируем контролы
 export { KeyboardControl } from './core/controls/keyboardControl.js';
