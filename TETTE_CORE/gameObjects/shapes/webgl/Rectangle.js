@@ -1,10 +1,10 @@
 import { GameObject } from '../../../core/core_logic/gameObject.js';
 
 export class Rectangle extends GameObject {
-  constructor(x, y, width, height, color) {
+  constructor(x, y, width, height, color, borderColor = null, borderWidth = 0, round = 0) {
     super(x, y, width, height, color);
-
-    // Определяем цвет и вершины
+    console.log(x, y, width, height)
+    // Определяем вершины
     this.vertices = [
       x, y,                // Верхний левый угол
       x + width, y,         // Верхний правый угол
@@ -12,27 +12,17 @@ export class Rectangle extends GameObject {
       x, y + height         // Нижний левый угол
     ];
 
-    // Устанавливаем цвет для каждой вершины
-    const [r, g, b] = this.hexToRgb(color);
+    // Устанавливаем цвет для каждой вершины (цвет уже обработан в ColorMixin)
     this.colors = [
-      r, g, b, 1.0,  // Цвет вершины 1
-      r, g, b, 1.0,  // Цвет вершины 2
-      r, g, b, 1.0,  // Цвет вершины 3
-      r, g, b, 1.0   // Цвет вершины 4
+      ...color, 1.0,  // Цвет вершины 1
+      ...color, 1.0,  // Цвет вершины 2
+      ...color, 1.0,  // Цвет вершины 3
+      ...color, 1.0   // Цвет вершины 4
     ];
 
     // Буферы для вершин и цветов
     this.vertexBuffer = null;
     this.colorBuffer = null;
-  }
-
-  // Конвертация HEX-цвета в нормализованный RGB (0-1)
-  hexToRgb(hex) {
-    const bigint = parseInt(hex.slice(1), 16);
-    const r = ((bigint >> 16) & 255) / 255;
-    const g = ((bigint >> 8) & 255) / 255;
-    const b = (bigint & 255) / 255;
-    return [r, g, b];
   }
 
   // Метод для инициализации буферов

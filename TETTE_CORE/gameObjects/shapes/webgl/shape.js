@@ -11,6 +11,7 @@ import { Star } from './Star.js';
 import { ColorMixin } from '../../../core/core_logic/ColorMixin.js'; // Убедитесь в правильности пути
 
 export function getShapes(renderType) {
+  console.log(renderType)
   return {
     // Функция для создания квадрата
     square: function(params) {
@@ -33,7 +34,8 @@ export function getShapes(renderType) {
     rectangle: function(params) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
-
+      console.log(params.color)
+      console.log(color)
       return new Rectangle(
         params.x,
         params.y,
