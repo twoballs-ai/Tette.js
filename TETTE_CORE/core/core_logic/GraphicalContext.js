@@ -15,19 +15,19 @@ export class GraphicalContext {
 
     initializeContext(type) {
         if (type === '2d') {
-            return this.canvas.getContext('2d');
+          return this.canvas.getContext('2d');
         } else if (type === 'webgl') {
-            return this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
+          return this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
         } else if (type === 'webgpu') {
-            if (navigator.gpu) {
-                return this.canvas.getContext('gpupresent');
-            } else {
-                throw new Error("WebGPU not supported on this browser.");
-            }
+          if (navigator.gpu) {
+            return this.canvas.getContext('webgpu');
+          } else {
+            throw new Error("WebGPU not supported on this browser.");
+          }
         } else {
-            throw new Error("Unsupported context type: " + type);
+          throw new Error("Unsupported context type: " + type);
         }
-    }
+      }
 
     createRenderer(type, backgroundColor) {
         if (type === '2d') {

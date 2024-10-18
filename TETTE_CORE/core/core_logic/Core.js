@@ -22,7 +22,11 @@ export class Core {
     }
   }
 
-  start() {
+  async start() {
+    // Если рендерер имеет метод init (как WebGPURenderer), ждем его инициализации
+    if (typeof this.renderer.init === 'function') {
+      await this.renderer.init();
+    }
     requestAnimationFrame(this.loop);
   }
 

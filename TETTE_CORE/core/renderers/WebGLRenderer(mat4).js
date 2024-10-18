@@ -1,4 +1,6 @@
+// WebGLRenderer.js  работает но надо поправить импорт
 import { Renderer } from '../core_logic/Renderer.js';
+import { mat4 } from 'gl-matrix/esm/index.js'; // или относительный путь к месту, где находится gl-matrix
 
 export class WebGLRenderer extends Renderer {
   constructor(graphicalContext, backgroundColor) {
@@ -17,7 +19,9 @@ export class WebGLRenderer extends Renderer {
     // Создание матрицы проекции
     this.createProjectionMatrix();
   }
+
   initializeWebGL() {
+    // Устанавливаем цвет очистки экрана
     const [r, g, b] = this.backgroundColor;
     this.context.clearColor(r, g, b, 1.0);
     this.context.enable(this.context.DEPTH_TEST);
@@ -26,8 +30,6 @@ export class WebGLRenderer extends Renderer {
     // Устанавливаем вьюпорт
     this.context.viewport(0, 0, this.canvas.width, this.canvas.height);
   }
-
-  // Конвертация HEX-цвета в нормализованные RGB
 
   initShaders() {
     // Исходный код вершинного шейдера
@@ -73,41 +75,46 @@ export class WebGLRenderer extends Renderer {
 
     // Получаем расположение атрибутов
     this.vertexPositionAttribute = this.context.getAttribLocation(this.shaderProgram, 'aVertexPosition');
+    if (this.vertexPositionAttribute === -1) {
+      console.error('Attribute aVertexPosition not found in shader program.');
+    }
     this.context.enableVertexAttribArray(this.vertexPositionAttribute);
 
     this.vertexColorAttribute = this.context.getAttribLocation(this.shaderProgram, 'aVertexColor');
+    if (this.vertexColorAttribute === -1) {
+      console.error('Attribute aVertexColor not found in shader program.');
+    }
     this.context.enableVertexAttribArray(this.vertexColorAttribute);
+
+    // Получаем локацию uniform-переменных
+    this.uProjection = this.context.getUniformLocation(this.shaderProgram, 'uProjection');
+    if (this.uProjection === null) {
+      console.error('Uniform uProjection not found in shader program.');
+    }
   }
 
   createProjectionMatrix() {
-    const canvasWidth = this.canvas.width;
-    const canvasHeight = this.canvas.height;
-
-    this.projectionMatrix = [
-      2 / canvasWidth, 0, 0, 0,
-      0, -2 / canvasHeight, 0, 0,
-      0, 0, 1, 0,
-      -1, 1, 0, 1
-    ];
+    // Создаем матрицу проекции
+    this.projectionMatrix = mat4.create();
+    mat4.ortho(this.projectionMatrix, 0, this.canvas.width, this.canvas.height, 0, -1, 1);
 
     // Передаем матрицу проекции в шейдер
-    const uProjection = this.context.getUniformLocation(this.shaderProgram, 'uProjection');
-    this.context.uniformMatrix4fv(uProjection, false, new Float32Array(this.projectionMatrix));
+    this.context.uniformMatrix4fv(this.uProjection, false, this.projectionMatrix);
   }
 
-loadShader(type, source) {
-  const shader = this.context.createShader(type);
-  this.context.shaderSource(shader, source);
-  this.context.compileShader(shader);
+  loadShader(type, source) {
+    const shader = this.context.createShader(type);
+    this.context.shaderSource(shader, source);
+    this.context.compileShader(shader);
 
-  if (!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
-    console.error('Ошибка при компиляции шейдера:', this.context.getShaderInfoLog(shader));
-    this.context.deleteShader(shader);
-    return null;
+    if (!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
+      console.error('Ошибка при компиляции шейдера:', this.context.getShaderInfoLog(shader));
+      this.context.deleteShader(shader);
+      return null;
+    }
+
+    return shader;
   }
-
-  return shader;
-}
 
   clear() {
     // Очищаем буферы цвета и глубины

@@ -4,7 +4,7 @@ import { getShape2d } from '../../TETTE_CORE/gameObjects/shapes/shape2d.js';
 import { SceneManager } from '../../TETTE_CORE/core/core_logic/SceneManager.js';
 
 
-const renderType = 'webgl'; // Change to '2d' or 'webgl' as needed
+const renderType = 'webgpu'; // Change to '2d' or 'webgl' as needed
 
 // Get shape2d object configured with renderType
 const shape2d = getShape2d(renderType);
@@ -187,4 +187,6 @@ sceneManager.addGameObjectToScene('level2',  playerLevel2, myText, triangle, sta
 sceneManager.changeScene('level1');
 
 // Запуск игры
-game.start();
+(async () => {
+  await game.start();
+})();
