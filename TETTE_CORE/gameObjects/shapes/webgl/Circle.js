@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class Circle extends GameObject {
   constructor(x, y, radius, startAngle = 0, endAngle = 2 * Math.PI, color = '#000000', borderColor = null, borderWidth = 0) {

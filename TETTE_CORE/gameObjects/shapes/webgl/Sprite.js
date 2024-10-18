@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class Sprite extends GameObject {
     constructor(image, x, y, width, height, preserveAspectRatio = false) {

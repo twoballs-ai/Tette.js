@@ -39,7 +39,7 @@ playerLevel1.update = function(deltaTime) {
 
 const player2Level1 = shape2d.circle({
   x: 150,
-  y: 150,
+  y: 50,
   radius: 50,
   color: 'green',
   borderColor: 'black',

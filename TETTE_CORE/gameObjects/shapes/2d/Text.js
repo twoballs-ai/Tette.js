@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class Text extends GameObject {
   constructor(text, x, y, fontsize = 16, color = 'black', fontFamily = 'Arial', borderColor = null, borderWidth = 0) {

@@ -22,23 +22,16 @@ export class WebGLRenderer extends Renderer {
   }
 
   // Конвертация HEX-цвета в нормализованные RGB
-  hexToRgb(hex) {
-    const bigint = parseInt(hex.slice(1), 16);
-    const r = ((bigint >> 16) & 255) / 255;
-    const g = ((bigint >> 8) & 255) / 255;
-    const b = (bigint & 255) / 255;
-    return [r, g, b];
-  }
 
   initShaders() {
     // Исходный код вершинного шейдера
     const vertexShaderSource = `
-      attribute vec4 aVertexPosition;
+      attribute vec2 aVertexPosition;
       attribute vec4 aVertexColor;
       varying lowp vec4 vColor;
 
       void main(void) {
-        gl_Position = aVertexPosition;
+        gl_Position = vec4(aVertexPosition, 0.0, 1.0);
         vColor = aVertexColor;
       }
     `;
@@ -77,24 +70,19 @@ export class WebGLRenderer extends Renderer {
     this.context.enableVertexAttribArray(this.vertexColorAttribute);
   }
 
-  loadShader(type, source) {
-    const shader = this.context.createShader(type);
+loadShader(type, source) {
+  const shader = this.context.createShader(type);
+  this.context.shaderSource(shader, source);
+  this.context.compileShader(shader);
 
-    // Привязываем исходный код к шейдеру
-    this.context.shaderSource(shader, source);
-
-    // Компилируем шейдер
-    this.context.compileShader(shader);
-
-    // Проверяем успешность компиляции
-    if (!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
-      console.error('Ошибка при компиляции шейдера: ' + this.context.getShaderInfoLog(shader));
-      this.context.deleteShader(shader);
-      return null;
-    }
-
-    return shader;
+  if (!this.context.getShaderParameter(shader, this.context.COMPILE_STATUS)) {
+    console.error('Ошибка при компиляции шейдера:', this.context.getShaderInfoLog(shader));
+    this.context.deleteShader(shader);
+    return null;
   }
+
+  return shader;
+}
 
   clear() {
     // Очищаем буферы цвета и глубины

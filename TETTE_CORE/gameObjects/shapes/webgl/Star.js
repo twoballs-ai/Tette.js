@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class Star extends GameObject {
   constructor(x, y, radius, points, color = 'black', borderColor = null, borderWidth = 0) {

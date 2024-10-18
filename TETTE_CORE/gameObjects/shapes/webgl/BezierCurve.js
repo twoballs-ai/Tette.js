@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class BezierCurve extends GameObject {
   constructor(startX, startY, controlX1, controlY1, controlX2, controlY2, endX, endY, color = '#000000', widthline = 1) {

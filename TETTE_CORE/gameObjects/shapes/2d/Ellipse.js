@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class Ellipse extends GameObject {
   constructor(x, y, rX, rY, rot, start, end, color, borderColor = null, borderWidth = 0) {

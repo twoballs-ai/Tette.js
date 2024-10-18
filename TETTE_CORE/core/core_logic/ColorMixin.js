@@ -68,6 +68,7 @@ export function ColorMixin(color, renderType) {
     green: '#00FF00',
     blue: '#0000FF',
     gray: '#808080',
+    yellow: '#FFFF00',
     // Можно добавить дополнительные цвета по мере необходимости
   };
   

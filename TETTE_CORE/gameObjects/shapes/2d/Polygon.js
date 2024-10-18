@@ -1,4 +1,4 @@
-import { GameObject } from '../../../core/core_logic/gameObject.js';
+import { GameObject } from '../gameObject.js';
 
 export class Polygon extends GameObject {
   constructor(vertices, color = 'black', borderColor = null, borderWidth = 0) {

@@ -26,15 +26,22 @@ const playerLevel1 = shape2d.rectangle({
   y: 50,
   width:100,
   height:200,
-  color: 'rgb(10, 105, 30)',
+  color: 'rgb(147, 197, 114)',
 });
 
+playerLevel1.update = function(deltaTime) {
 
+  this.x += deltaTime * 0.1;
+  console.log(this.x)
+  if (this.x > 700) {
+    sceneManager.changeScene('level2');
+  }
+};
 sceneManager.addGameObjectToScene('level1', playerLevel1);
 
 // Уровень 2
 const playerLevel2 = shape2d.rectangle({
-  x: 50,
+  x: 150,
   y: 50,
   width:100,
   height:200,
