@@ -1,32 +1,36 @@
+// Core.js
 import { GraphicalContext } from './GraphicalContext.js';
 import { GameTypeFactory } from './GameTypeFactory.js';
-import { ColorMixin } from './ColorMixin.js'; // Импортируем миксин для цветов
+import { ColorMixin } from './ColorMixin.js';
 
 export class Core {
-  constructor({ canvasId, renderType = '2d', backgroundColor = 'black', sceneManager, gameType = null }) {
-    // Преобразуем цвет фона в зависимости от типа рендера (2D или WebGL)
+  constructor({ canvasId, renderType = '2d', backgroundColor = 'black', sceneManager, width = 900, height = 600 }) {
     const normalizedBackgroundColor = ColorMixin(backgroundColor, renderType);
 
-    this.graphicalContext = new GraphicalContext(canvasId, renderType, normalizedBackgroundColor); 
+    this.graphicalContext = new GraphicalContext(canvasId, renderType, normalizedBackgroundColor, width, height);
     this.renderer = this.graphicalContext.getRenderer();
     this.sceneManager = sceneManager;
     this.lastTime = 0;
     this.loop = this.loop.bind(this);
+    this.gameTypeInstance = null; // Устанавливаем null по умолчанию
+  }
 
-    // Создаём экземпляр GameTypeFactory и передаём ему текущий экземпляр Core
-    this.gameTypeFactory = new GameTypeFactory(this);
-
-    // Если указан тип игры, загружаем его через фабрику
-    if (gameType) {
-      this.gameTypeInstance = this.gameTypeFactory.loadGameType(gameType);
+  setGameType(gameType) {
+    if (gameType) { // Проверяем, был ли передан тип игры
+      console.log(`Установка типа игры: ${gameType}`);
+      this.gameTypeInstance = new GameTypeFactory(this).loadGameType(gameType);
+      if (!this.gameTypeInstance) {
+        console.error(`Ошибка: тип игры ${gameType} не загружен.`);
+      }
     }
   }
 
   async start() {
-    // Если рендерер имеет метод init (как WebGPURenderer), ждем его инициализации
+    // Инициализация рендерера, если требуется
     if (typeof this.renderer.init === 'function') {
       await this.renderer.init();
     }
+
     requestAnimationFrame(this.loop);
   }
 

@@ -1,15 +1,33 @@
-// gameTypes/PlatformerGameType.js
-import { PlayerCharacter } from '../gameObjects/characters/PlayerCharacter.js';
+import { PlatformerPlayerCharacter } from '../gameObjects/characters/PlatformerPlayerCharacter.js';
+
 export class PlatformerGameType {
   constructor(core) {
     this.core = core;
+    this.sceneManager = this.core.sceneManager;
+
+    // Пытаемся найти игрока в текущей сцене
+    this.player = this.getPlayerFromCurrentScene();
+
+    if (!this.player) {
+      throw new Error("Player is not defined in PlatformerGameType. Make sure it is added to the scene.");
+    }
+
     this.setupControls();
     this.setupPhysics();
-    this.setupPlayer();
+  }
+
+  getPlayerFromCurrentScene() {
+    const currentScene = this.sceneManager.getCurrentScene();
+    if (!currentScene) {
+      console.error("No current scene found.");
+      return null;
+    }
+
+    // Найдем объект игрока в текущей сцене по типу PlayerCharacter
+    return currentScene.gameObjects.find(obj => obj instanceof PlatformerPlayerCharacter);
   }
 
   setupControls() {
-    // Настройка управления для платформера
     this.keysPressed = {};
     window.addEventListener('keydown', (e) => {
       this.keysPressed[e.key] = true;
@@ -20,48 +38,53 @@ export class PlatformerGameType {
   }
 
   setupPhysics() {
-    // Инициализация физики
-    this.gravity = 0.5;
-  }
-
-  setupPlayer() {
-    // Создание игрока и добавление его на сцену
-    this.player = new PlayerCharacter(100, 100, 50, 50, 'red');
-    this.core.sceneManager.addGameObjectToScene('level1', this.player);
+    this.gravity = 9.8; // Устанавливаем значение гравитации (м/с²)
   }
 
   update(deltaTime) {
-    // Обновление состояния игры
+    // Обновляем ссылку на игрока в текущей сцене
+    this.player = this.getPlayerFromCurrentScene();
+    if (!this.player) return;
+
     this.handleInput(deltaTime);
     this.applyPhysics(deltaTime);
   }
 
   handleInput(deltaTime) {
-    // Обработка ввода пользователя
-    const speed = deltaTime * 0.1;
+    const SPEED_SCALE = 6000 // Скорректируйте масштаб до более разумного значения
+    const deltaSeconds = deltaTime / 1000;
+    
+    const moveSpeed = this.player.speed * SPEED_SCALE * deltaSeconds;
+  
+    // Проверяем нажатие клавиш и изменяем скорость игрока
     if (this.keysPressed['ArrowLeft']) {
-      this.player.x -= speed;
+      this.player.velocityX = -moveSpeed;
+    } else if (this.keysPressed['ArrowRight']) {
+      this.player.velocityX = moveSpeed;
+    } else {
+      this.player.velocityX = 0;
     }
-    if (this.keysPressed['ArrowRight']) {
-      this.player.x += speed;
-    }
-    if (this.keysPressed['Space'] && this.player.onGround) {
-      this.player.velocityY = -10; // Прыжок
+  
+    // Прыжок, если нажат пробел и персонаж на земле
+    if (this.keysPressed[' '] && this.player.onGround) {
+      this.player.velocityY = -350; // Прыжок (в пикселях/сек)
       this.player.onGround = false;
     }
   }
 
   applyPhysics(deltaTime) {
-    // Применение физики к игроку
-    this.player.velocityY += this.gravity;
-    this.player.y += this.player.velocityY;
-
-    // Проверка столкновения с землёй
-    const groundLevel = 500; // Уровень земли
-    if (this.player.y >= groundLevel) {
-      this.player.y = groundLevel;
-      this.player.velocityY = 0;
-      this.player.onGround = true;
+    if (!this.player || typeof this.player.velocityY !== 'number') {
+      console.error("Player's velocityY is not defined or not a number.");
+      return;
     }
+  
+    // Преобразуем deltaTime в секунды
+    const deltaSeconds = deltaTime / 1000;
+  
+    // Применение гравитации
+    this.player.velocityY += this.gravity * deltaSeconds * 100; // Масштабируем значение гравитации для соответствия размеру в пикселях
+
+    // Обновляем позицию игрока с учетом физики
+    this.player.update(deltaTime);
   }
 }

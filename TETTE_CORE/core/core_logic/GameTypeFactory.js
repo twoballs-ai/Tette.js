@@ -1,5 +1,6 @@
+// GameTypeFactory.js
 import { PlatformerGameType } from '../../gameTypePresets/PlatformerGameType.js';
-// import { ClickerGameType } from './gameTypes/ClickerGameType.js';
+// Добавьте другие типы игр по необходимости
 
 export class GameTypeFactory {
   constructor(core) {
@@ -7,11 +8,12 @@ export class GameTypeFactory {
   }
 
   loadGameType(gameType) {
+    console.log(`Загрузка типа игры: ${gameType}`); // Отладочный вывод
     switch (gameType) {
       case 'platformer':
+        console.log(this.core)
+        console.log(`Создание экземпляра PlatformerGameType для: ${gameType}`);
         return new PlatformerGameType(this.core);
-      // case 'clicker':
-      //   return new ClickerGameType(this.core);
       // Добавьте другие типы игр по необходимости
       default:
         console.warn(`Неизвестный тип игры: ${gameType}`);

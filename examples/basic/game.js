@@ -10,14 +10,16 @@ const renderType = '2d'; // Change to '2d' or 'webgl' as needed
 const shape2d = getShape2d(renderType);
 // Создаем менеджер сцен
 const sceneManager = new SceneManager();
-
+console.log(sceneManager)
 // Создаем экземпляр Core
 const game = new Core({
   canvasId: 'canvas',
   renderType: renderType,
-  backgroundColor: 'rgb(210, 105, 30)',
+  backgroundColor: 'gray',
   sceneManager: sceneManager,
-  // gameType: 'platformer',
+  width: window.innerWidth, // Устанавливаем ширину экрана
+  height: window.innerHeight, // Устанавливаем высоту экрана
+  gameType: 'platformer',
 });
 
 sceneManager.createScene('level1','level2');
@@ -118,6 +120,7 @@ myImage.onload = () => {
     y: 150,
     width:300,
     height: 200,
+    
     // preserveAspectRatio: true,
   });
 
