@@ -29,15 +29,26 @@ export class Sprite extends GameObject {
 
             // Если требуется повторение изображения
             if (this.repeatX || this.repeatY) {
+                // Создаем паттерн
                 const pattern = context.createPattern(this.image, this.repeatX && this.repeatY ? 'repeat' : this.repeatX ? 'repeat-x' : 'repeat-y');
                 context.fillStyle = pattern;
 
-                // Вычисляем область для повторения
-                const patternWidth = renderWidth * this.repeatCountX;
-                const patternHeight = renderHeight * this.repeatCountY;
+                // Вычисляем фактический размер для повторения
+                const patternWidth = this.image.width * this.repeatCountX; // Используем исходную ширину изображения для повторений
+                const patternHeight = this.image.height * this.repeatCountY; // Используем исходную высоту изображения для повторений
+
+                // Если включено сохранение пропорций, то нужно масштабировать на основе renderWidth и renderHeight
+                if (this.preserveAspectRatio) {
+                    context.scale(renderWidth / this.image.width, renderHeight / this.image.height);
+                }
 
                 // Заполняем область с паттерном
                 context.fillRect(this.x, this.y, patternWidth, patternHeight);
+
+                // Если было включено масштабирование, возвращаем контекст в исходное состояние
+                if (this.preserveAspectRatio) {
+                    context.setTransform(1, 0, 0, 1, 0, 0); // Сбрасываем трансформацию
+                }
             } else {
                 // Обычное рисование изображения без повторения
                 context.drawImage(this.image, this.x, this.y, renderWidth, renderHeight);
