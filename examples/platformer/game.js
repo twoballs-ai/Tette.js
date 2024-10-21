@@ -1,9 +1,13 @@
 import { Core } from '../../TETTE_CORE/core/core_logic/Core.js';
 import { SceneManager } from '../../TETTE_CORE/core/core_logic/SceneManager.js';
 import { PlatformerPlayerCharacter } from '../../TETTE_CORE/gameObjects/characters/PlatformerPlayerCharacter.js'; 
+import { getShape2d } from '../../TETTE_CORE/gameObjects/shapes/shape2d.js';
+
+
+// Get shape2d object configured with renderType
 
 const renderType = '2d'; 
-
+const shape2d = getShape2d(renderType);
 const sceneManager = new SceneManager();
 
 // Создаем сцену 'level1' и 'level2'
@@ -29,12 +33,35 @@ const player = new PlatformerPlayerCharacter({
   height: 100,
   color: 'red',
   health: 100,
-  speed: 1,
-  animationFrames: runAnimationFrames, // Передаем массив кадров
-  // sprite: 'path/to/single/sprite.png', // Или используем одиночный спрайт
+  speed: 3,
+  animations: {
+    // idle: ['./idle_animation/idle-1.png', './idle_animation/idle-2.png'],
+    run: runAnimationFrames,
+    // jump: ['./jump_animation/jump-1.png'],
+    // attack: ['./attack_animation/attack-1.png', './attack_animation/attack-2.png']
+  }
 });
 
+const myImage = new Image();
+myImage.src = './floor.png';
 
+myImage.onload = () => {
+  const mySprite = shape2d.sprite({
+    image: myImage, // Используем загруженное изображение
+    x: 200,
+    y: 550,
+    width: 300,
+    height: 200,
+    preserveAspectRatio: true, // Сохранение пропорций
+    // repeatX: true, // Повторение по горизонтали
+    // repeatY: false, // Не повторять по вертикали
+    // repeatCountX: 1, // Повторить 5 раз по горизонтали
+    // repeatCountY: 1, // Не повторять по вертикали
+  });
+
+  // Добавляем спрайт на сцену 'level1'
+  sceneManager.addGameObjectToScene('level1', mySprite);
+};
 
 // Добавляем игрока на сцену 'level1'
 sceneManager.addGameObjectToScene('level1', player);

@@ -1,9 +1,8 @@
-// shapes.js (в папке 2d или webgl)
 import { Rectangle } from './Rectangle.js';
 import { Circle } from './Circle.js';
 import { Ellipse } from './Ellipse.js';
 import { Text } from './Text.js';
-import { Sprite } from './Sprite.js';
+import { Sprite } from './Sprite.js'; // Обновлённый класс Sprite
 import { Line } from './Line.js';
 import { Polygon } from './Polygon.js';
 import { BezierCurve } from './BezierCurve.js';
@@ -115,7 +114,7 @@ export function getShapes(renderType) {
       );
     },
 
-    // Функция для создания спрайта
+    // Функция для создания спрайта с поддержкой повторений
     sprite: function(params) {
       return new Sprite(
         params.image,
@@ -123,7 +122,11 @@ export function getShapes(renderType) {
         params.y,
         params.width,
         params.height,
-        params.preserveAspectRatio || false
+        params.preserveAspectRatio || false,
+        params.repeatX || false, // Повторение по оси X
+        params.repeatY || false, // Повторение по оси Y
+        params.repeatCountX || 1, // Количество повторений по X
+        params.repeatCountY || 1 // Количество повторений по Y
       );
     },
 
