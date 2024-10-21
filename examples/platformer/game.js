@@ -52,11 +52,11 @@ myImage.onload = () => {
     y: 550,
     width: 300,
     height: 200,
-    // preserveAspectRatio: true, // Сохранение пропорций
-    repeatX: true, // Повторение по горизонтали
-    repeatY: true, // Не повторять по вертикали
-    repeatCountX: 1, // Повторить 5 раз по горизонтали
-    repeatCountY: 1, // Не повторять по вертикали
+    preserveAspectRatio: true, // Сохранение пропорций
+    // repeatX: true, // Повторение по горизонтали
+    // repeatY: true, // Не повторять по вертикали
+    // repeatCountX: 1, // Повторить 5 раз по горизонтали
+    // repeatCountY: 1, // Не повторять по вертикали
   });
 
   // Добавляем спрайт на сцену 'level1'
