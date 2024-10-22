@@ -49,7 +49,6 @@ export class PlatformerPlayerCharacter {
   setAnimation(animationName) {
     if (this.animations[animationName] && this.animations[animationName].length > 0) {
       if (this.currentAnimation !== animationName) {
-        console.log(`Смена анимации на: ${animationName}`);
         this.currentAnimation = animationName;
         this.currentFrameIndex = 0;
         this.elapsedTime = 0;
@@ -68,14 +67,7 @@ export class PlatformerPlayerCharacter {
       this.facingDirection = -1;
     }
 
-    // Ограничение снизу (симуляция пола)
-    const groundLevel = 500;
-    if (this.y >= groundLevel) {
-      this.y = groundLevel;
-      this.velocityY = 0;
-      this.onGround = true;
-    }
-
+    // Обработка анимаций на основе движения
     if (this.velocityX !== 0) {
       this.setAnimation('run');
     } else if (this.velocityY !== 0 && !this.onGround) {
@@ -84,6 +76,7 @@ export class PlatformerPlayerCharacter {
       this.setAnimation('idle');
     }
 
+    // Обновление анимаций
     const activeFrames = this.currentAnimation ? this.animations[this.currentAnimation] : [];
     if (activeFrames.length > 0) {
       this.elapsedTime += deltaTime;
@@ -97,6 +90,7 @@ export class PlatformerPlayerCharacter {
   render(context) {
     context.save();
 
+    // Инвертируем изображение при движении влево
     if (this.facingDirection === -1) {
       context.translate(this.x + this.width / 2, this.y);
       context.scale(-1, 1);
@@ -105,6 +99,7 @@ export class PlatformerPlayerCharacter {
       context.translate(this.x, this.y);
     }
 
+    // Рисуем спрайт или анимацию
     if (this.sprite && this.sprite.complete) {
       context.drawImage(this.sprite, 0, 0, this.width, this.height);
     } else {

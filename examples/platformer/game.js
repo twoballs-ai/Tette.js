@@ -28,7 +28,7 @@ const runAnimationFrames = [
 // Создаем игрока с анимацией "бега"
 const player = new PlatformerPlayerCharacter({
   x: 100,
-  y: 100,
+  // y: 100,
   width: 100,
   height: 100,
   color: 'red',
@@ -45,23 +45,20 @@ const player = new PlatformerPlayerCharacter({
 const myImage = new Image();
 myImage.src = './floor.png';
 
-myImage.onload = () => {
-  const mySprite = shape2d.sprite({
-    image: myImage, // Используем загруженное изображение
-    x: 200,
-    y: 550,
-    width: 300,
-    height: 200,
-    preserveAspectRatio: true, // Сохранение пропорций
-    // repeatX: true, // Повторение по горизонтали
-    // repeatY: true, // Не повторять по вертикали
-    // repeatCountX: 1, // Повторить 5 раз по горизонтали
-    // repeatCountY: 1, // Не повторять по вертикали
-  });
+const mySpriteGrid = shape2d.spriteGrid({
+  image: myImage,
+  x: 0,
+  y: 600,
+  width: 160,
+  height: 150,
+  repeatX: 10,
+  // repeatY: 3,
+  spacingX: 0,
+  // spacingY: 10
+});
 
-  // Добавляем спрайт на сцену 'level1'
-  sceneManager.addGameObjectToScene('level1', mySprite);
-};
+// Добавляем сетку на сцену
+sceneManager.addGameObjectToScene('level1', mySpriteGrid);
 
 // Добавляем игрока на сцену 'level1'
 sceneManager.addGameObjectToScene('level1', player);

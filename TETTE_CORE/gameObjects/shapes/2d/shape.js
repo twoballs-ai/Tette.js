@@ -8,6 +8,7 @@ import { Polygon } from './Polygon.js';
 import { BezierCurve } from './BezierCurve.js';
 import { Star } from './Star.js';
 import { ColorMixin } from '../../../core/core_logic/ColorMixin.js'; // Убедитесь в правильности пути
+import { SpriteGrid } from '../../utils/SpriteGrid.js'; // Импортируем компонент сетки спрайтов
 
 export function getShapes(renderType) {
   return {
@@ -128,6 +129,25 @@ export function getShapes(renderType) {
         params.repeatCountX || 1, // Количество повторений по X
         params.repeatCountY || 1 // Количество повторений по Y
       );
+    },
+
+    // Функция для создания сетки спрайтов
+    spriteGrid: function(params) {
+      const spriteGrid = new SpriteGrid(
+        params.image,
+        params.x,
+        params.y,
+        params.width,
+        params.height,
+        params.repeatX || 1,   // Количество повторений по X
+        params.repeatY || 1,   // Количество повторений по Y
+        params.spacingX || 0,  // Отступ по X
+        params.spacingY || 0,  // Отступ по Y
+        params.preserveAspectRatio || false
+      );
+
+      spriteGrid.createGrid(); // Создаем сетку спрайтов
+      return spriteGrid; // Возвращаем объект SpriteGrid
     },
 
     // Функция для создания линии

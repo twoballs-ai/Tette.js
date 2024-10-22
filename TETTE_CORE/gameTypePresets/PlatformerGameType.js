@@ -32,15 +32,23 @@ export class PlatformerGameType {
     // Контроллер клавиатуры уже инициализирован в KeyboardControl
   }
 
-  update(deltaTime) {
-    this.player = this.getPlayerFromCurrentScene();
-    if (!this.player) return;
+update(deltaTime) {
+  this.player = this.getPlayerFromCurrentScene();
+  if (!this.player || !this.player.rigidBody) return;
 
-    this.handleInput(deltaTime);
-    this.physics.applyGravity(this.player, deltaTime);
-    this.physics.applyMovement(this.player, deltaTime);
-  }
+  this.handleInput(deltaTime);
 
+  // Применяем физику для игрока
+  this.physics.applyGravity(this.player.rigidBody, deltaTime);
+  this.physics.applyMovement(this.player.rigidBody, deltaTime);
+
+  // Проверка столкновений с другими объектами
+  const currentScene = this.sceneManager.getCurrentScene();
+  const objects = currentScene.gameObjects.filter(obj => obj !== this.player);
+
+  // Проверяем столкновения игрока с объектами
+  this.physics.checkCollisions(this.player, objects);
+}
   handleInput(deltaTime) {
     const SPEED_SCALE = 6000;
     const deltaSeconds = deltaTime / 1000;
@@ -55,7 +63,7 @@ export class PlatformerGameType {
     }
 
     if (this.keyboardControl.isKeyPressed(' ') && this.player.onGround) {
-      this.player.velocityY = -350;
+      this.player.velocityY = -350; // Параметр прыжка
       this.player.onGround = false;
     }
   }
