@@ -17,16 +17,18 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Rectangle(
-        params.x,
-        params.y,
-        params.size,
-        params.size,
-        color,
-        borderColor,
-        params.borderWidth,
-        params.round
-      );
+      return new Rectangle({
+        x: params.x,
+        y: params.y,
+        width: params.size,
+        height: params.size,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        round: params.round,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания прямоугольника
@@ -34,15 +36,17 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Rectangle(
-        params.x,
-        params.y,
-        params.width,
-        params.height,
-        color,
-        borderColor,
-        params.borderWidth
-      );
+      return new Rectangle({
+        x: params.x,
+        y: params.y,
+        width: params.width,
+        height: params.height,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания круга
@@ -50,16 +54,16 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Circle(
-        params.x,
-        params.y,
-        params.radius,
-        0,
-        2 * Math.PI,
-        color,
-        borderColor,
-        params.borderWidth
-      );
+      return new Circle({
+        x: params.x,
+        y: params.y,
+        radius: params.radius,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания дуги
@@ -67,16 +71,18 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Circle(
-        params.x,
-        params.y,
-        params.radius,
-        params.startAngle,
-        params.endAngle,
-        color,
-        borderColor,
-        params.borderWidth
-      );
+      return new Circle({
+        x: params.x,
+        y: params.y,
+        radius: params.radius,
+        startAngle: params.startAngle,
+        endAngle: params.endAngle,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания эллипса
@@ -84,18 +90,20 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Ellipse(
-        params.x,
-        params.y,
-        params.rX,
-        params.rY,
-        params.rot || 0,
-        params.start || 0,
-        params.end || 2 * Math.PI,
-        color,
-        borderColor,
-        params.borderWidth
-      );
+      return new Ellipse({
+        x: params.x,
+        y: params.y,
+        radiusX: params.rX,
+        radiusY: params.rY,
+        rotation: params.rot || 0,
+        startAngle: params.start || 0,
+        endAngle: params.end || 2 * Math.PI,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания текста
@@ -103,66 +111,67 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color || 'black', renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Text(
-        params.text,
-        params.x,
-        params.y,
-        params.fontsize || 16,
-        color,
-        params.fontFamily || 'Arial',
-        borderColor,
-        params.borderWidth
-      );
+      return new Text({
+        text: params.text,
+        x: params.x,
+        y: params.y,
+        fontSize: params.fontsize || 16,
+        fontFamily: params.fontFamily || 'Arial',
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
-    // Функция для создания спрайта с поддержкой повторений
+    // Функция для создания спрайта
     sprite: function(params) {
-      return new Sprite(
-        params.image,
-        params.x,
-        params.y,
-        params.width,
-        params.height,
-        params.preserveAspectRatio || false,
-        params.repeatX || false, // Повторение по оси X
-        params.repeatY || false, // Повторение по оси Y
-        params.repeatCountX || 1, // Количество повторений по X
-        params.repeatCountY || 1 // Количество повторений по Y
-      );
+      return new Sprite({
+        image: params.image,
+        x: params.x,
+        y: params.y,
+        width: params.width,
+        height: params.height,
+        preserveAspectRatio: params.preserveAspectRatio || false,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания сетки спрайтов
     spriteGrid: function(params) {
-      const spriteGrid = new SpriteGrid(
-        params.image,
-        params.x,
-        params.y,
-        params.width,
-        params.height,
-        params.repeatX || 1,   // Количество повторений по X
-        params.repeatY || 1,   // Количество повторений по Y
-        params.spacingX || 0,  // Отступ по X
-        params.spacingY || 0,  // Отступ по Y
-        params.preserveAspectRatio || false
-      );
-
-      spriteGrid.createGrid(); // Создаем сетку спрайтов
-      return spriteGrid; // Возвращаем объект SpriteGrid
+      return new SpriteGrid({
+        image: params.image,
+        x: params.x,
+        y: params.y,
+        width: params.width,
+        height: params.height,
+        repeatX: params.repeatX || 1,
+        repeatY: params.repeatY || 1,
+        spacingX: params.spacingX || 0,
+        spacingY: params.spacingY || 0,
+        preserveAspectRatio: params.preserveAspectRatio || false,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания линии
     line: function(params) {
       const color = ColorMixin(params.color || 'black', renderType);
 
-      return new Line(
-        params.x1,
-        params.y1,
-        params.x2,
-        params.y2,
-        color,
-        params.widthline || 1,
-        params.lineRounded || 'butt'
-      );
+      return new Line({
+        x1: params.x1,
+        y1: params.y1,
+        x2: params.x2,
+        y2: params.y2,
+        color: color,
+        lineWidth: params.widthline || 1,
+        lineCap: params.lineRounded || 'butt',
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания многоугольника
@@ -170,30 +179,34 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Polygon(
-        params.vertices,
-        color,
-        borderColor,
-        params.borderWidth
-      );
+      return new Polygon({
+        vertices: params.vertices,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания кривой Безье
     bezierCurve: function(params) {
       const color = ColorMixin(params.color, renderType);
 
-      return new BezierCurve(
-        params.startX,
-        params.startY,
-        params.controlX1,
-        params.controlY1,
-        params.controlX2,
-        params.controlY2,
-        params.endX,
-        params.endY,
-        color,
-        params.widthline || 1
-      );
+      return new BezierCurve({
+        startX: params.startX,
+        startY: params.startY,
+        controlX1: params.controlX1,
+        controlY1: params.controlY1,
+        controlX2: params.controlX2,
+        controlY2: params.controlY2,
+        endX: params.endX,
+        endY: params.endY,
+        color: color,
+        lineWidth: params.widthline || 1,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания звезды
@@ -201,29 +214,31 @@ export function getShapes(renderType) {
       const color = ColorMixin(params.color, renderType);
       const borderColor = params.borderColor ? ColorMixin(params.borderColor, renderType) : null;
 
-      return new Star(
-        params.x,
-        params.y,
-        params.radius,
-        params.points,
-        color,
-        borderColor,
-        params.borderWidth
-      );
+      return new Star({
+        x: params.x,
+        y: params.y,
+        radius: params.radius,
+        points: params.points,
+        color: color,
+        borderColor: borderColor,
+        borderWidth: params.borderWidth,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
 
     // Функция для создания точки
     point: function(params) {
       const color = ColorMixin(params.color || 'black', renderType);
 
-      return new Circle(
-        params.x,
-        params.y,
-        params.size || 5,
-        0,
-        2 * Math.PI,
-        color
-      );
+      return new Circle({
+        x: params.x,
+        y: params.y,
+        radius: params.size || 5,
+        color: color,
+        enablePhysics: params.enablePhysics || false,  // Поддержка физики
+        isStatic: params.isStatic || false
+      });
     },
   };
 }

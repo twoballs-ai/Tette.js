@@ -1,19 +1,30 @@
+// PlatformerPlayerCharacter.js
+import { RigidBody2d } from '../../core/physics/RigidBody2d.js';
+
 export class PlatformerPlayerCharacter {
-  constructor({ x, y, width, height, color, sprite, animations = {}, health = 100, speed = 30 }) {
+  constructor({
+    x,
+    y,
+    width,
+    height,
+    color,
+    sprite,
+    animations = {},
+    health = 100,
+    speed = 30,
+    enablePhysics = false, // Добавляем параметр enablePhysics с значением по умолчанию false
+  }) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
     this.color = color;
-    this.velocityY = 0;
-    this.velocityX = 0;
-    this.onGround = false;
     this.health = health;
     this.speed = speed;
     this.currentFrameIndex = 0;
     this.frameDuration = 100;
     this.elapsedTime = 0;
-    this.facingDirection = 1; // 1 для вправо, -1 для влево
+    this.facingDirection = 1;
 
     // Проверяем наличие спрайта
     this.sprite = sprite ? new Image() : null;
@@ -26,7 +37,7 @@ export class PlatformerPlayerCharacter {
       idle: animations.idle || [],
       run: animations.run || [],
       jump: animations.jump || [],
-      attack: animations.attack || []
+      attack: animations.attack || [],
     };
 
     if (this.animations.idle.length === 0) {
@@ -44,10 +55,31 @@ export class PlatformerPlayerCharacter {
         });
       }
     }
+
+    // Добавляем физику только если enablePhysics === true
+    if (enablePhysics) {
+      // Добавляем rigidBody
+      this.rigidBody = new RigidBody2d({
+        mass: 1,
+        friction: 0.9,
+        isStatic: false,
+      });
+
+      // Инициализируем позиции
+      this.rigidBody.x = this.x;
+      this.rigidBody.y = this.y;
+      this.rigidBody.width = this.width;
+      this.rigidBody.height = this.height;
+    } else {
+      this.rigidBody = null; // Если физика не нужна, rigidBody не создаётся
+    }
   }
 
   setAnimation(animationName) {
-    if (this.animations[animationName] && this.animations[animationName].length > 0) {
+    if (
+      this.animations[animationName] &&
+      this.animations[animationName].length > 0
+    ) {
       if (this.currentAnimation !== animationName) {
         this.currentAnimation = animationName;
         this.currentFrameIndex = 0;
@@ -55,34 +87,43 @@ export class PlatformerPlayerCharacter {
       }
     }
   }
-  
+
   update(deltaTime) {
-    const deltaSeconds = deltaTime / 1000;
-    this.x += this.velocityX * deltaSeconds;
-    this.y += this.velocityY * deltaSeconds;
+    if (this.rigidBody) {
+      // Если физика включена, обновляем позиции из rigidBody
+      this.x = this.rigidBody.x;
+      this.y = this.rigidBody.y;
 
-    if (this.velocityX > 0) {
-      this.facingDirection = 1;
-    } else if (this.velocityX < 0) {
-      this.facingDirection = -1;
-    }
+      // Определяем направление взгляда на основе скорости
+      if (this.rigidBody.velocityX > 0) {
+        this.facingDirection = 1;
+      } else if (this.rigidBody.velocityX < 0) {
+        this.facingDirection = -1;
+      }
 
-    // Обработка анимаций на основе движения
-    if (this.velocityX !== 0) {
-      this.setAnimation('run');
-    } else if (this.velocityY !== 0 && !this.onGround) {
-      this.setAnimation('jump');
+      // Обработка анимаций на основе движения
+      if (!this.rigidBody.onGround) {
+        this.setAnimation('jump');
+      } else if (this.rigidBody.velocityX !== 0) {
+        this.setAnimation('run');
+      } else {
+        this.setAnimation('idle');
+      }
     } else {
-      this.setAnimation('idle');
+      // Если физика не включена, можно добавить альтернативную логику обновления
+      // Например, обновление позиции на основе скорости без физики
     }
 
     // Обновление анимаций
-    const activeFrames = this.currentAnimation ? this.animations[this.currentAnimation] : [];
+    const activeFrames = this.currentAnimation
+      ? this.animations[this.currentAnimation]
+      : [];
     if (activeFrames.length > 0) {
       this.elapsedTime += deltaTime;
       if (this.elapsedTime >= this.frameDuration) {
         this.elapsedTime = 0;
-        this.currentFrameIndex = (this.currentFrameIndex + 1) % activeFrames.length;
+        this.currentFrameIndex =
+          (this.currentFrameIndex + 1) % activeFrames.length;
       }
     }
   }
@@ -103,9 +144,20 @@ export class PlatformerPlayerCharacter {
     if (this.sprite && this.sprite.complete) {
       context.drawImage(this.sprite, 0, 0, this.width, this.height);
     } else {
-      const activeFrames = this.currentAnimation ? this.animations[this.currentAnimation] : [];
-      if (activeFrames.length > 0 && activeFrames[this.currentFrameIndex].complete) {
-        context.drawImage(activeFrames[this.currentFrameIndex], 0, 0, this.width, this.height);
+      const activeFrames = this.currentAnimation
+        ? this.animations[this.currentAnimation]
+        : [];
+      if (
+        activeFrames.length > 0 &&
+        activeFrames[this.currentFrameIndex].complete
+      ) {
+        context.drawImage(
+          activeFrames[this.currentFrameIndex],
+          0,
+          0,
+          this.width,
+          this.height
+        );
       } else {
         context.fillStyle = this.color;
         context.fillRect(0, 0, this.width, this.height);

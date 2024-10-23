@@ -12,11 +12,11 @@ export class Core {
     this.sceneManager = sceneManager;
     this.lastTime = 0;
     this.loop = this.loop.bind(this);
-    this.gameTypeInstance = null; // Устанавливаем null по умолчанию
+    this.gameTypeInstance = null;
   }
 
   setGameType(gameType) {
-    if (gameType) { // Проверяем, был ли передан тип игры
+    if (gameType) {
       console.log(`Установка типа игры: ${gameType}`);
       this.gameTypeInstance = new GameTypeFactory(this).loadGameType(gameType);
       if (!this.gameTypeInstance) {
@@ -29,6 +29,11 @@ export class Core {
     // Инициализация рендерера, если требуется
     if (typeof this.renderer.init === 'function') {
       await this.renderer.init();
+    }
+
+    // Если gameTypeInstance определен, вызываем его start (если есть)
+    if (this.gameTypeInstance && typeof this.gameTypeInstance.start === 'function') {
+      this.gameTypeInstance.start();
     }
 
     requestAnimationFrame(this.loop);
