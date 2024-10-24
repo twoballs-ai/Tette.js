@@ -13,7 +13,8 @@ export class SpriteGrid extends GameObject {
     spacingY = 0,
     preserveAspectRatio = false,
     enablePhysics = false,
-    isStatic = false
+    isStatic = false,
+    layer = 0  // Новый параметр для слоя
   }) {
     super({
       x: x,
@@ -22,7 +23,8 @@ export class SpriteGrid extends GameObject {
       height: height * repeatY + spacingY * (repeatY - 1), // Общая высота сетки
       color: null,
       enablePhysics: enablePhysics,
-      isStatic: isStatic
+      isStatic: isStatic,
+      layer: layer  // Устанавливаем слой в родительском классе
     });
 
     this.image = image;

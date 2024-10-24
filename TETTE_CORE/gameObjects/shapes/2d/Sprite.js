@@ -8,7 +8,8 @@ export class Sprite extends GameObject {
       height: params.height,
       color: null, // Цвет можно задать null, так как это спрайт
       enablePhysics: params.enablePhysics || false,
-      isStatic: params.isStatic || false
+      isStatic: params.isStatic || false,
+      layer: params.layer || 0  // Добавляем слой рендеринга
     });
 
     this.image = params.image;

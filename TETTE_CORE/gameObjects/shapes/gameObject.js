@@ -1,13 +1,13 @@
-// GameObject.js
 import { RigidBody2d } from '../../core/physics/RigidBody2d.js';
 
 export class GameObject {
-  constructor({ x, y, width, height, color, enablePhysics = false, isStatic = false }) {
+  constructor({ x, y, width, height, color, enablePhysics = false, isStatic = false, layer = 0 }) {
     this.x = x;  // Позиция по X
     this.y = y;  // Позиция по Y
     this.width = width;  // Ширина объекта
     this.height = height;  // Высота объекта
     this.color = color;  // Цвет объекта
+    this.layer = layer;  // Слой для рендеринга (чем меньше значение, тем раньше рендерится)
 
     // Добавляем поддержку физики
     if (enablePhysics) {

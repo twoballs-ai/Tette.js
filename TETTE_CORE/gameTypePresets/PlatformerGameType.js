@@ -2,7 +2,7 @@
 import { GameType } from './GameType.js';
 import { PlatformerPlayerCharacter } from '../gameObjects/characters/PlatformerPlayerCharacter.js';
 import { KeyboardControl } from '../core/controls/keyboardControl.js';
-
+import { Enemy } from '../gameObjects/characters/Enemy.js';
 export class PlatformerGameType extends GameType {
   constructor(core) {
     super(core);
@@ -43,6 +43,44 @@ export class PlatformerGameType extends GameType {
     if (this.keyboardControl.isKeyPressed(' ') && rigidBody.onGround) {
       rigidBody.velocityY = -1200; // Скорость прыжка
       rigidBody.onGround = false;
+    }
+  }
+  checkPlayerEnemyCollisions() {
+    const currentScene = this.sceneManager.getCurrentScene();
+    const enemies = currentScene.gameObjects.filter(obj => obj instanceof Enemy);
+  
+    enemies.forEach(enemy => {
+      if (this.isColliding(this.player, enemy)) {
+        this.resolvePlayerEnemyCollision(this.player, enemy);
+      }
+    });
+  }
+  resolvePlayerEnemyCollision(player, enemy) {
+    // Проверяем, прыгает ли игрок на врага
+    if (player.rigidBody.velocityY > 0 && player.y + player.height <= enemy.y + enemy.height / 2) {
+      // Враг побежден
+      enemy.setAnimation('die');
+
+      // Удаляем врага после окончания анимации
+      setTimeout(() => {
+        const currentScene = this.sceneManager.getCurrentScene();
+        this.sceneManager.removeGameObjectFromScene(currentScene.name, enemy);
+      }, enemy.frameDuration * enemy.animations.die.length);
+
+      // Увеличиваем счет игрока
+      this.score += 100;
+
+      // Отталкиваем игрока вверх
+      player.rigidBody.velocityY = -600;
+    } else {
+      // Игрок получает урон
+      player.health -= 1;
+
+      if (player.health <= 0) {
+        // Обрабатываем смерть игрока
+        console.log("Игрок погиб!");
+        // Здесь можно перезапустить игру или уровень
+      }
     }
   }
 }

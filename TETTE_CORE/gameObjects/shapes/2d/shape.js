@@ -9,7 +9,6 @@ import { BezierCurve } from './BezierCurve.js';
 import { Star } from './Star.js';
 import { ColorMixin } from '../../../core/core_logic/ColorMixin.js'; // Убедитесь в правильности пути
 import { SpriteGrid } from '../../utils/SpriteGrid.js'; // Импортируем компонент сетки спрайтов
-
 export function getShapes(renderType) {
   return {
     // Функция для создания квадрата
@@ -27,7 +26,8 @@ export function getShapes(renderType) {
         borderWidth: params.borderWidth,
         round: params.round,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -45,7 +45,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -62,7 +63,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -81,7 +83,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -102,7 +105,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -121,7 +125,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -135,7 +140,8 @@ export function getShapes(renderType) {
         height: params.height,
         preserveAspectRatio: params.preserveAspectRatio || false,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -153,7 +159,8 @@ export function getShapes(renderType) {
         spacingY: params.spacingY || 0,
         preserveAspectRatio: params.preserveAspectRatio || false,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -170,7 +177,8 @@ export function getShapes(renderType) {
         lineWidth: params.widthline || 1,
         lineCap: params.lineRounded || 'butt',
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -185,7 +193,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -205,7 +214,8 @@ export function getShapes(renderType) {
         color: color,
         lineWidth: params.widthline || 1,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -223,7 +233,8 @@ export function getShapes(renderType) {
         borderColor: borderColor,
         borderWidth: params.borderWidth,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
 
@@ -237,7 +248,8 @@ export function getShapes(renderType) {
         radius: params.size || 5,
         color: color,
         enablePhysics: params.enablePhysics || false,  // Поддержка физики
-        isStatic: params.isStatic || false
+        isStatic: params.isStatic || false,
+        layer: params.layer || 0  // Добавлен параметр layer
       });
     },
   };

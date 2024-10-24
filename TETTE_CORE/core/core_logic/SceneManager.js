@@ -37,8 +37,8 @@ export class SceneManager {
       });
     } else {
       console.error(`Невозможно добавить объект в несуществующую сцену: "${sceneName}".`);
-    }
   }
+ }
 
   update(deltaTime) {
     if (this.currentScene) {
@@ -51,8 +51,12 @@ export class SceneManager {
   }
 
   render(context) {
+
     if (this.currentScene) {
-      this.currentScene.gameObjects.forEach((object) => {
+      const sortedGameObjects = this.currentScene.gameObjects.sort((a, b) => a.layer - b.layer);
+
+      // Рендерим каждый объект
+      sortedGameObjects.forEach((object) => {
         if (typeof object.render === "function") {
           object.render(context);
         }
