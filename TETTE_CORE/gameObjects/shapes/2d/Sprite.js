@@ -1,41 +1,27 @@
 import { GameObject } from '../gameObject.js';
-
 export class Sprite extends GameObject {
-  constructor(
-    image,
-    x,
-    y,
-    width,
-    height,
-    preserveAspectRatio = false,
-    enablePhysics = false,
-    isStatic = false
-  ) {
-    // Передаем параметры через объект, как ожидает GameObject
+  constructor(params) {
     super({
-      x: x,
-      y: y,
-      width: width,
-      height: height,
-      color: null,          // Цвет можно задать null, так как это спрайт
-      enablePhysics: enablePhysics,
-      isStatic: isStatic
+      x: params.x,
+      y: params.y,
+      width: params.width,
+      height: params.height,
+      color: null, // Цвет можно задать null, так как это спрайт
+      enablePhysics: params.enablePhysics || false,
+      isStatic: params.isStatic || false
     });
 
-    this.image = image;
-    this.preserveAspectRatio = preserveAspectRatio;
+    this.image = params.image;
+    this.preserveAspectRatio = params.preserveAspectRatio || false;
   }
 
-  // Метод для обновления позиции объекта
   update(deltaTime) {
     if (this.rigidBody) {
-      // Обновляем позиции из физического тела
       this.x = this.rigidBody.x;
       this.y = this.rigidBody.y;
     }
   }
 
-  // Метод для рендеринга спрайта
   render(context) {
     if (this.image.complete) {
       let renderWidth = this.width;

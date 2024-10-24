@@ -54,12 +54,44 @@ const mySpriteGrid = shape2d.spriteGrid({
   enablePhysics: true, // Включаем физику для пола
   isStatic: true,      // Делаем пол статичным объектом
 });
+const nebo = new Image();
+nebo.src = './nebo.jpg';
 
-// Добавляем пол на сцену
-sceneManager.addGameObjectToScene('level1', mySpriteGrid);
+nebo.onload = () => {
+  const neboSprite = shape2d.sprite({
+    image: nebo, // Используем загруженное изображение
+    x: 0,
+    y: 0,
+    width: 1920,
+    height: 1080,
+    // preserveAspectRatio: true, // Сохраняем пропорции
+    // enablePhysics: true, // Включаем физику
+    isStatic: false,     // Делаем объект динамическим
+  });
 
+  // Добавляем спрайт в уровень 1
+  sceneManager.addGameObjectToScene('level1', neboSprite);
+};
+const boxImage = new Image();
+boxImage.src = './box.jpg';
+
+boxImage.onload = () => {
+  const mySprite = shape2d.sprite({
+    image: boxImage, // Используем загруженное изображение
+    x: 500,
+    y: 150,
+    width: 100,
+    height: 100,
+    preserveAspectRatio: true, // Сохраняем пропорции
+    enablePhysics: true, // Включаем физику
+    isStatic: false,     // Делаем объект динамическим
+  });
+
+  // Добавляем спрайт в уровень 1
+  sceneManager.addGameObjectToScene('level1', mySprite);
+};
 // Добавляем игрока на сцену 'level1'
-sceneManager.addGameObjectToScene('level1', player);
+sceneManager.addGameObjectToScene('level1', player,mySpriteGrid );
 
 // Переключаемся на сцену 'level1'
 sceneManager.changeScene('level1');

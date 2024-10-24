@@ -41,7 +41,7 @@ export class PlatformerGameType extends GameType {
     }
 
     if (this.keyboardControl.isKeyPressed(' ') && rigidBody.onGround) {
-      rigidBody.velocityY = -600; // Скорость прыжка
+      rigidBody.velocityY = -1200; // Скорость прыжка
       rigidBody.onGround = false;
     }
   }
