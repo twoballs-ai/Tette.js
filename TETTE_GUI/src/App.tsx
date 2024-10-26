@@ -1,28 +1,47 @@
 // src/App.tsx
 import React, { useState } from 'react';
-import { Layout, Button, List, Typography, InputNumber, Menu, Dropdown, Tabs } from 'antd';
-import { DownOutlined, PlayCircleOutlined, SaveOutlined, PlusOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import { Layout, Button, Typography, Menu, Dropdown, Tabs } from 'antd';
+import { DownOutlined, PlusOutlined, SaveOutlined, PlayCircleOutlined } from '@ant-design/icons';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 const { Title } = Typography;
 const { TabPane } = Tabs;
 
 const App: React.FC = () => {
-  const [selectedObject, setSelectedObject] = useState<string | null>(null);
-  const [scenes, setScenes] = useState<number>(0); // Количество сцен
-  const objects = ['Player', 'Platform', 'Coin', 'Enemy', 'Background'];
+  const [sceneTabs, setSceneTabs] = useState<string[]>(['Сцена 1']); // Вкладки для сцен
+  const [activeScene, setActiveScene] = useState<string>('Сцена 1'); // Активная сцена
+  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({ 'Сцена 1': 'levelEditor' }); // Активные под-вкладки для каждой сцены
 
-  // Меню для пункта "Проект"
+  // Добавление новой сцены
+  const handleNewScene = () => {
+    const newScene = `Сцена ${sceneTabs.length + 1}`;
+    setSceneTabs((prevTabs) => [...prevTabs, newScene]);
+    setActiveScene(newScene);
+    setEditorTabs((prevTabs) => ({ ...prevTabs, [newScene]: 'levelEditor' })); // Устанавливаем под-вкладку по умолчанию
+  };
+
+  // Обработчик для смены активной сцены
+  const handleSceneChange = (key: string) => {
+    setActiveScene(key);
+  };
+
+  // Обработчик для смены активной под-вкладки редактора для текущей сцены
+  const handleEditorTabChange = (key: string) => {
+    setEditorTabs((prevTabs) => ({ ...prevTabs, [activeScene]: key }));
+  };
+
+  // Меню "Проект"
   const projectMenu = (
     <Menu>
-      <Menu.Item key="newScene" onClick={() => handleNewScene()}>Создать сцену</Menu.Item>
+      <Menu.Item key="newScene" onClick={handleNewScene}>
+        Создать сцену
+      </Menu.Item>
       <Menu.Item key="open">Открыть</Menu.Item>
       <Menu.Item key="save">Сохранить</Menu.Item>
     </Menu>
   );
 
-  // Меню для пункта "Правка"
+  // Меню "Правка"
   const editMenu = (
     <Menu>
       <Menu.Item key="undo">Отменить</Menu.Item>
@@ -30,7 +49,7 @@ const App: React.FC = () => {
     </Menu>
   );
 
-  // Меню для пункта "О программе"
+  // Меню "О программе"
   const aboutMenu = (
     <Menu>
       <Menu.Item key="version">Версия</Menu.Item>
@@ -38,36 +57,54 @@ const App: React.FC = () => {
     </Menu>
   );
 
-  // Обработчик для создания новой сцены и добавления вкладок
-  const handleNewScene = () => {
-    setScenes((prevScenes) => prevScenes + 1); // Увеличиваем количество сцен
-  };
-
   return (
-    <Layout style={{ height: '100vh' }}>
-      {/* Верхняя панель с классическим меню */}
-      <Header style={{ background: '#002140', padding: '0 16px', display: 'flex', alignItems: 'center', height: '40px' }}>
+    <Layout style={{ height: '100vh', background: '#1c1c1c' }}>
+      {/* Верхняя панель с классическим меню и вкладками для сцен */}
+      <Header style={{ background: '#1f1f1f', padding: '0 16px', display: 'flex', alignItems: 'center', height: '50px' }}>
         <Dropdown overlay={projectMenu} trigger={['click']}>
           <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
             Проект <DownOutlined />
           </Button>
         </Dropdown>
-        
+
         <Dropdown overlay={editMenu} trigger={['click']}>
           <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
             Правка <DownOutlined />
           </Button>
         </Dropdown>
-        
+
         <Dropdown overlay={aboutMenu} trigger={['click']}>
           <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
             О программе <DownOutlined />
           </Button>
         </Dropdown>
+
+        {/* Вкладки сцен с темным стилем */}
+        <Tabs
+          activeKey={activeScene}
+          onChange={handleSceneChange}
+          type="card"
+          style={{
+            marginLeft: '16px',
+            flex: 1,
+            // background: 'red',
+            borderRadius: '4px',
+            color: 'white',
+          }}
+          tabBarStyle={{
+            backgroundColor: '#2e2e2e',
+            // color: 'red',
+            borderBottom: '1px solid #444',
+          }}
+        >
+          {sceneTabs.map((tab) => (
+            <TabPane tab={<span style={{ color: '#0958d9' }}>{tab}</span>} key={tab} />
+          ))}
+        </Tabs>
       </Header>
-      
+
       {/* Второй ряд с кнопками управления */}
-      <Header style={{ background: '#001529', padding: '0 16px', display: 'flex', alignItems: 'center', height: '48px' }}>
+      <Header style={{ background: '#1f1f1f', padding: '0 16px', display: 'flex', alignItems: 'center', height: '48px' }}>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleNewScene} style={{ marginRight: '16px' }}>
           New Scene
         </Button>
@@ -80,21 +117,24 @@ const App: React.FC = () => {
       </Header>
 
       <Layout>
-        {/* Вкладки для переключения между "Редактор сцены" и "Редактор логики" */}
-        <Content style={{ padding: '16px', background: '#f0f2f5' }}>
-          <Tabs defaultActiveKey="1" type="card">
-            {Array.from({ length: scenes }, (_, i) => (
-              <TabPane tab={`Сцена ${i + 1}`} key={`scene-${i + 1}`}>
-                <Tabs defaultActiveKey="editor" type="card">
-                  <TabPane tab="Редактор сцены" key="editor">
-                    <SceneEditor selectedObject={selectedObject} setSelectedObject={setSelectedObject} objects={objects} />
-                  </TabPane>
-                  <TabPane tab="Редактор логики" key="logic">
-                    <LogicEditor selectedObject={selectedObject} />
-                  </TabPane>
-                </Tabs>
-              </TabPane>
-            ))}
+        {/* Вкладки для "Редактор уровня" и "Редактор логики" с темным стилем */}
+        <Content style={{ padding: '16px', background: '#2e2e2e' }}>
+          <Tabs
+            activeKey={editorTabs[activeScene] || 'levelEditor'}
+            onChange={handleEditorTabChange}
+            type="line"
+            tabBarStyle={{
+              backgroundColor: '#2e2e2e',
+              color: 'white',
+              borderBottom: '1px solid #444',
+            }}
+          >
+            <TabPane tab={<span style={{ color: 'white' }}>Редактор уровня</span>} key="levelEditor">
+              <LevelEditorContent scene={activeScene} />
+            </TabPane>
+            <TabPane tab={<span style={{ color: 'white' }}>Редактор логики</span>} key="logicEditor">
+              <LogicEditorContent scene={activeScene} />
+            </TabPane>
           </Tabs>
         </Content>
       </Layout>
@@ -102,59 +142,17 @@ const App: React.FC = () => {
   );
 };
 
-// Компонент для редактора сцены
-const SceneEditor: React.FC<{ selectedObject: string | null, setSelectedObject: (obj: string) => void, objects: string[] }> = ({ selectedObject, setSelectedObject, objects }) => (
-  <Layout>
-    {/* Левая панель свойств */}
-    <Sider width={250} style={{ background: '#fff', padding: '16px' }}>
-      <Title level={4}>Properties</Title>
-      {selectedObject ? (
-        <div>
-          <p>Selected Object: {selectedObject}</p>
-          <div>
-            <p>Position X:</p>
-            <InputNumber defaultValue={0} />
-          </div>
-          <div>
-            <p>Position Y:</p>
-            <InputNumber defaultValue={0} />
-          </div>
-          <div>
-            <p>Size:</p>
-            <InputNumber defaultValue={50} />
-          </div>
-        </div>
-      ) : (
-        <p>Select an object to view its properties</p>
-      )}
-    </Sider>
-
-    {/* Центральная рабочая область для рендеринга сцены */}
-    <Content style={{ padding: '16px', background: '#e0e0e0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Title>Scene Editor Area</Title>
-    </Content>
-
-    {/* Правая панель со списком объектов */}
-    <Sider width={250} style={{ background: '#fff', padding: '16px' }}>
-      <Title level={4}>Objects</Title>
-      <List
-        bordered
-        dataSource={objects}
-        renderItem={(item) => (
-          <List.Item onClick={() => setSelectedObject(item)} style={{ cursor: 'pointer' }}>
-            {item}
-          </List.Item>
-        )}
-      />
-    </Sider>
-  </Layout>
+// Компонент для отображения редактора уровня
+const LevelEditorContent: React.FC<{ scene: string }> = ({ scene }) => (
+  <div style={{ padding: '16px', background: '#1c1c1c', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Title level={4} style={{ color: 'white' }}>Редактор уровня для {scene}</Title>
+  </div>
 );
 
-// Компонент для редактора логики
-const LogicEditor: React.FC<{ selectedObject: string | null }> = ({ selectedObject }) => (
-  <div style={{ padding: '16px', background: '#e0e0e0', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-    <Title level={4}>Logic Editor for {selectedObject || 'None Selected'}</Title>
-    {/* Здесь можно добавить больше компонентов для редактирования логики */}
+// Компонент для отображения редактора логики
+const LogicEditorContent: React.FC<{ scene: string }> = ({ scene }) => (
+  <div style={{ padding: '16px', background: '#1c1c1c', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Title level={4} style={{ color: 'white' }}>Редактор логики для {scene}</Title>
   </div>
 );
 
