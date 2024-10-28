@@ -1,36 +1,103 @@
-// src/App.tsx
 import React, { useState } from 'react';
-import { Layout, Button, Typography, Menu, Dropdown, Tabs } from 'antd';
-import { DownOutlined, PlusOutlined, SaveOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { Layout, Button, Typography, Menu, Dropdown } from 'antd';
+import {
+  DownOutlined,
+  PlusOutlined,
+  SaveOutlined,
+  PlayCircleOutlined,
+  CloseOutlined,
+} from '@ant-design/icons';
+import LevelEditorContent from './components/LogicEditor/LogicEditorContent';
+import LogicEditorContent from './components/SceneEditor/SceneEditorContent';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
-const { TabPane } = Tabs;
+
+const CustomTabs: React.FC<{
+  tabs: string[];
+  activeTab: string;
+  onTabClick: (tab: string) => void;
+  onAddTab: () => void;
+  onRemoveTab: (tab: string) => void;
+}> = ({ tabs, activeTab, onTabClick, onAddTab, onRemoveTab }) => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        backgroundColor: '#2e2e2e',
+        borderRadius: '4px',
+        padding: '8px',
+        color: 'white',
+        flex: 1,
+      }}
+    >
+      {tabs.map((tab) => (
+        <div
+          key={tab}
+          onClick={() => onTabClick(tab)}
+          style={{
+            padding: '8px 16px',
+            marginRight: '8px',
+            cursor: 'pointer',
+            color: activeTab === tab ? '#0958d9' : 'white',
+            backgroundColor: activeTab === tab ? '#1f1f1f' : 'transparent',
+            borderRadius: '4px',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          {tab}
+          <CloseOutlined
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemoveTab(tab);
+            }}
+            style={{ fontSize: '12px', color: '#ff4d4f', marginLeft: '8px' }}
+          />
+        </div>
+      ))}
+      <Button
+        onClick={onAddTab}
+        type="primary"
+        icon={<PlusOutlined />}
+        style={{ marginLeft: 'auto' }}
+      >
+        Add Scene
+      </Button>
+    </div>
+  );
+};
 
 const App: React.FC = () => {
-  const [sceneTabs, setSceneTabs] = useState<string[]>(['Сцена 1']); // Вкладки для сцен
-  const [activeScene, setActiveScene] = useState<string>('Сцена 1'); // Активная сцена
-  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({ 'Сцена 1': 'levelEditor' }); // Активные под-вкладки для каждой сцены
+  const [sceneTabs, setSceneTabs] = useState<string[]>(['Сцена 1']);
+  const [activeScene, setActiveScene] = useState<string>('Сцена 1');
+  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({
+    'Сцена 1': 'levelEditor',
+  });
 
-  // Добавление новой сцены
   const handleNewScene = () => {
     const newScene = `Сцена ${sceneTabs.length + 1}`;
     setSceneTabs((prevTabs) => [...prevTabs, newScene]);
     setActiveScene(newScene);
-    setEditorTabs((prevTabs) => ({ ...prevTabs, [newScene]: 'levelEditor' })); // Устанавливаем под-вкладку по умолчанию
+    setEditorTabs((prevTabs) => ({ ...prevTabs, [newScene]: 'levelEditor' }));
   };
 
-  // Обработчик для смены активной сцены
-  const handleSceneChange = (key: string) => {
-    setActiveScene(key);
+  const handleRemoveScene = (tab: string) => {
+    setSceneTabs((prevTabs) => prevTabs.filter((t) => t !== tab));
+    if (activeScene === tab && sceneTabs.length > 1) {
+      setActiveScene(sceneTabs[0]);
+    }
   };
 
-  // Обработчик для смены активной под-вкладки редактора для текущей сцены
+  const handleSceneChange = (tab: string) => {
+    setActiveScene(tab);
+  };
+
   const handleEditorTabChange = (key: string) => {
     setEditorTabs((prevTabs) => ({ ...prevTabs, [activeScene]: key }));
   };
 
-  // Меню "Проект"
   const projectMenu = (
     <Menu>
       <Menu.Item key="newScene" onClick={handleNewScene}>
@@ -41,7 +108,6 @@ const App: React.FC = () => {
     </Menu>
   );
 
-  // Меню "Правка"
   const editMenu = (
     <Menu>
       <Menu.Item key="undo">Отменить</Menu.Item>
@@ -49,7 +115,6 @@ const App: React.FC = () => {
     </Menu>
   );
 
-  // Меню "О программе"
   const aboutMenu = (
     <Menu>
       <Menu.Item key="version">Версия</Menu.Item>
@@ -59,8 +124,15 @@ const App: React.FC = () => {
 
   return (
     <Layout style={{ height: '100vh', background: '#1c1c1c' }}>
-      {/* Верхняя панель с классическим меню и вкладками для сцен */}
-      <Header style={{ background: '#1f1f1f', padding: '0 16px', display: 'flex', alignItems: 'center', height: '50px' }}>
+      <Header
+        style={{
+          background: '#1f1f1f',
+          padding: '0 16px',
+          display: 'flex',
+          alignItems: 'center',
+          height: '50px',
+        }}
+      >
         <Dropdown overlay={projectMenu} trigger={['click']}>
           <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
             Проект <DownOutlined />
@@ -79,33 +151,30 @@ const App: React.FC = () => {
           </Button>
         </Dropdown>
 
-        {/* Вкладки сцен с темным стилем */}
-        <Tabs
-          activeKey={activeScene}
-          onChange={handleSceneChange}
-          type="card"
-          style={{
-            marginLeft: '16px',
-            flex: 1,
-            // background: 'red',
-            borderRadius: '4px',
-            color: 'white',
-          }}
-          tabBarStyle={{
-            backgroundColor: '#2e2e2e',
-            // color: 'red',
-            borderBottom: '1px solid #444',
-          }}
-        >
-          {sceneTabs.map((tab) => (
-            <TabPane tab={<span style={{ color: '#0958d9' }}>{tab}</span>} key={tab} />
-          ))}
-        </Tabs>
+        <CustomTabs
+          tabs={sceneTabs}
+          activeTab={activeScene}
+          onTabClick={handleSceneChange}
+          onAddTab={handleNewScene}
+          onRemoveTab={handleRemoveScene}
+        />
       </Header>
 
-      {/* Второй ряд с кнопками управления */}
-      <Header style={{ background: '#1f1f1f', padding: '0 16px', display: 'flex', alignItems: 'center', height: '48px' }}>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleNewScene} style={{ marginRight: '16px' }}>
+      <Header
+        style={{
+          background: '#1f1f1f',
+          padding: '0 16px',
+          display: 'flex',
+          alignItems: 'center',
+          height: '48px',
+        }}
+      >
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleNewScene}
+          style={{ marginRight: '16px' }}
+        >
           New Scene
         </Button>
         <Button type="default" icon={<SaveOutlined />} style={{ marginRight: '16px' }}>
@@ -117,43 +186,30 @@ const App: React.FC = () => {
       </Header>
 
       <Layout>
-        {/* Вкладки для "Редактор уровня" и "Редактор логики" с темным стилем */}
         <Content style={{ padding: '16px', background: '#2e2e2e' }}>
-          <Tabs
-            activeKey={editorTabs[activeScene] || 'levelEditor'}
-            onChange={handleEditorTabChange}
-            type="line"
-            tabBarStyle={{
-              backgroundColor: '#2e2e2e',
-              color: 'white',
-              borderBottom: '1px solid #444',
-            }}
-          >
-            <TabPane tab={<span style={{ color: 'white' }}>Редактор уровня</span>} key="levelEditor">
-              <LevelEditorContent scene={activeScene} />
-            </TabPane>
-            <TabPane tab={<span style={{ color: 'white' }}>Редактор логики</span>} key="logicEditor">
-              <LogicEditorContent scene={activeScene} />
-            </TabPane>
-          </Tabs>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+            <Button
+              type={editorTabs[activeScene] === 'levelEditor' ? 'primary' : 'default'}
+              onClick={() => handleEditorTabChange('levelEditor')}
+            >
+              Редактор уровня
+            </Button>
+            <Button
+              type={editorTabs[activeScene] === 'logicEditor' ? 'primary' : 'default'}
+              onClick={() => handleEditorTabChange('logicEditor')}
+            >
+              Редактор логики
+            </Button>
+          </div>
+          {editorTabs[activeScene] === 'levelEditor' ? (
+            <LevelEditorContent scene={activeScene} />
+          ) : (
+            <LogicEditorContent scene={activeScene} />
+          )}
         </Content>
       </Layout>
     </Layout>
   );
 };
-
-// Компонент для отображения редактора уровня
-const LevelEditorContent: React.FC<{ scene: string }> = ({ scene }) => (
-  <div style={{ padding: '16px', background: '#1c1c1c', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-    <Title level={4} style={{ color: 'white' }}>Редактор уровня для {scene}</Title>
-  </div>
-);
-
-// Компонент для отображения редактора логики
-const LogicEditorContent: React.FC<{ scene: string }> = ({ scene }) => (
-  <div style={{ padding: '16px', background: '#1c1c1c', color: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-    <Title level={4} style={{ color: 'white' }}>Редактор логики для {scene}</Title>
-  </div>
-);
 
 export default App;
