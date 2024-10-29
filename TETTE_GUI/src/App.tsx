@@ -1,79 +1,31 @@
+// App.tsx
+
 import React, { useState } from 'react';
-import { Layout, Button, Typography, Menu, Dropdown } from 'antd';
+import { Layout, Button, Menu, Dropdown, Space } from 'antd';
 import {
   DownOutlined,
   PlusOutlined,
   SaveOutlined,
   PlayCircleOutlined,
-  CloseOutlined,
 } from '@ant-design/icons';
 import LevelEditorContent from './components/LogicEditor/LogicEditorContent';
 import LogicEditorContent from './components/SceneEditor/SceneEditorContent';
+import exportProjectToZip from './utils/exportProjectToZip';
+import saveProjectToTetteFile from './utils/saveProjectToTetteFile';
+import Tabs from './components/Tabs/Tabs';
 
 const { Header, Content } = Layout;
-const { Title } = Typography;
-
-const CustomTabs: React.FC<{
-  tabs: string[];
-  activeTab: string;
-  onTabClick: (tab: string) => void;
-  onAddTab: () => void;
-  onRemoveTab: (tab: string) => void;
-}> = ({ tabs, activeTab, onTabClick, onAddTab, onRemoveTab }) => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: '#2e2e2e',
-        borderRadius: '4px',
-        padding: '8px',
-        color: 'white',
-        flex: 1,
-      }}
-    >
-      {tabs.map((tab) => (
-        <div
-          key={tab}
-          onClick={() => onTabClick(tab)}
-          style={{
-            padding: '8px 16px',
-            marginRight: '8px',
-            cursor: 'pointer',
-            color: activeTab === tab ? '#0958d9' : 'white',
-            backgroundColor: activeTab === tab ? '#1f1f1f' : 'transparent',
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-          }}
-        >
-          {tab}
-          <CloseOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              onRemoveTab(tab);
-            }}
-            style={{ fontSize: '12px', color: '#ff4d4f', marginLeft: '8px' }}
-          />
-        </div>
-      ))}
-      <Button
-        onClick={onAddTab}
-        type="primary"
-        icon={<PlusOutlined />}
-        style={{ marginLeft: 'auto' }}
-      >
-        Add Scene
-      </Button>
-    </div>
-  );
-};
 
 const App: React.FC = () => {
   const [sceneTabs, setSceneTabs] = useState<string[]>(['Сцена 1']);
   const [activeScene, setActiveScene] = useState<string>('Сцена 1');
-  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({
-    'Сцена 1': 'levelEditor',
+  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({ 'Сцена 1': 'levelEditor' });
+
+  const createNewProject = () => ({
+    projectName: 'Новый проект',
+    version: '1.0',
+    scenes: [],
+    resources: {},
   });
 
   const handleNewScene = () => {
@@ -98,29 +50,31 @@ const App: React.FC = () => {
     setEditorTabs((prevTabs) => ({ ...prevTabs, [activeScene]: key }));
   };
 
-  const projectMenu = (
-    <Menu>
-      <Menu.Item key="newScene" onClick={handleNewScene}>
-        Создать сцену
-      </Menu.Item>
-      <Menu.Item key="open">Открыть</Menu.Item>
-      <Menu.Item key="save">Сохранить</Menu.Item>
-    </Menu>
-  );
+  const handleSaveProject = () => {
+    const projectData = createNewProject();
+    saveProjectToTetteFile(projectData);
+  };
 
-  const editMenu = (
-    <Menu>
-      <Menu.Item key="undo">Отменить</Menu.Item>
-      <Menu.Item key="redo">Повторить</Menu.Item>
-    </Menu>
-  );
+  const handleExportProject = () => {
+    const projectData = createNewProject();
+    exportProjectToZip(projectData);
+  };
 
-  const aboutMenu = (
-    <Menu>
-      <Menu.Item key="version">Версия</Menu.Item>
-      <Menu.Item key="contact">Контакты</Menu.Item>
-    </Menu>
-  );
+  const projectMenuItems = [
+    { label: 'Создать сцену', key: 'newScene', onClick: handleNewScene },
+    { label: 'Сохранить проект', key: 'save', onClick: handleSaveProject },
+    { label: 'Экспортировать проект', key: 'export', onClick: handleExportProject },
+  ];
+
+  const editMenuItems = [
+    { label: 'Отменить', key: 'undo' },
+    { label: 'Повторить', key: 'redo' },
+  ];
+
+  const aboutMenuItems = [
+    { label: 'Версия', key: 'version' },
+    { label: 'Контакты', key: 'contact' },
+  ];
 
   return (
     <Layout style={{ height: '100vh', background: '#1c1c1c' }}>
@@ -133,25 +87,34 @@ const App: React.FC = () => {
           height: '50px',
         }}
       >
-        <Dropdown overlay={projectMenu} trigger={['click']}>
-          <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
-            Проект <DownOutlined />
-          </Button>
+        <Dropdown menu={{ items: projectMenuItems }} trigger={['click']}>
+          <Space>
+            <Button type="text" style={{ color: 'white' }}>
+              Проект
+            </Button>
+            <DownOutlined />
+          </Space>
         </Dropdown>
 
-        <Dropdown overlay={editMenu} trigger={['click']}>
-          <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
-            Правка <DownOutlined />
-          </Button>
+        <Dropdown menu={{ items: editMenuItems }} trigger={['click']}>
+          <Space>
+            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>
+              Правка
+            </Button>
+            <DownOutlined />
+          </Space>
         </Dropdown>
 
-        <Dropdown overlay={aboutMenu} trigger={['click']}>
-          <Button type="text" style={{ color: 'white', marginRight: '16px' }}>
-            О программе <DownOutlined />
-          </Button>
+        <Dropdown menu={{ items: aboutMenuItems }} trigger={['click']}>
+          <Space>
+            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>
+              О программе
+            </Button>
+            <DownOutlined />
+          </Space>
         </Dropdown>
 
-        <CustomTabs
+        <Tabs
           tabs={sceneTabs}
           activeTab={activeScene}
           onTabClick={handleSceneChange}
@@ -177,7 +140,12 @@ const App: React.FC = () => {
         >
           New Scene
         </Button>
-        <Button type="default" icon={<SaveOutlined />} style={{ marginRight: '16px' }}>
+        <Button
+          type="default"
+          icon={<SaveOutlined />}
+          style={{ marginRight: '16px' }}
+          onClick={handleSaveProject}
+        >
           Save
         </Button>
         <Button type="primary" icon={<PlayCircleOutlined />}>
