@@ -15,6 +15,7 @@ import {
   updateOpenedScenes,
   loadOpenedScenes,
 } from './utils/storageUtils';
+import SceneEditor from './components/SceneEditor/SceneEditor';
 
 const { Header, Content } = Layout;
 
@@ -257,7 +258,8 @@ const App: React.FC = () => {
             </Button>
           </div>
           {editorTabs[activeScene] === 'levelEditor' ? (
-            <SceneEditorContent scene={activeScene} />
+            // <SceneEditorContent scene={activeScene} />
+            <SceneEditor />
           ) : (
             <LogicEditorContent scene={activeScene} />
           )}
