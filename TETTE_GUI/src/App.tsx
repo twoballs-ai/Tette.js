@@ -1,45 +1,85 @@
 // App.tsx
 
-import React, { useState } from 'react';
-import { Layout, Button, Menu, Dropdown, Space } from 'antd';
-import {
-  DownOutlined,
-  PlusOutlined,
-  SaveOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Layout, Button, Dropdown, Space, Drawer, Radio } from 'antd';
+import { DownOutlined, PlusOutlined, SaveOutlined, PlayCircleOutlined, MenuOutlined } from '@ant-design/icons';
 import LevelEditorContent from './components/LogicEditor/LogicEditorContent';
 import LogicEditorContent from './components/SceneEditor/SceneEditorContent';
-import exportProjectToZip from './utils/exportProjectToZip';
-import saveProjectToTetteFile from './utils/saveProjectToTetteFile';
 import Tabs from './components/Tabs/Tabs';
+
+import {
+  saveProjectData,
+  loadProjectData,
+  saveSceneData,
+  loadSceneData,
+  deleteSceneData,
+  updateOpenedScenes,
+  loadOpenedScenes,
+} from './utils/storageUtils';
 
 const { Header, Content } = Layout;
 
 const App: React.FC = () => {
-  const [sceneTabs, setSceneTabs] = useState<string[]>(['Сцена 1']);
-  const [activeScene, setActiveScene] = useState<string>('Сцена 1');
-  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({ 'Сцена 1': 'levelEditor' });
+  const [sceneTabs, setSceneTabs] = useState<string[]>([]);
+  const [activeScene, setActiveScene] = useState<string>('');
+  const [editorTabs, setEditorTabs] = useState<{ [key: string]: string }>({});
+  const [drawerVisible, setDrawerVisible] = useState(false);
+  const [drawerPlacement, setDrawerPlacement] = useState<'left' | 'right' | 'top' | 'bottom'>('left');
 
-  const createNewProject = () => ({
-    projectName: 'Новый проект',
-    version: '1.0',
-    scenes: [],
-    resources: {},
-  });
+  // Загрузка данных при инициализации
+  useEffect(() => {
+    const projectData = loadProjectData();
+    if (projectData) {
+      setSceneTabs(projectData.scenes);
+    }
+
+    const openScenes = loadOpenedScenes();
+    if (openScenes.length) {
+      setSceneTabs(openScenes.map((scene) => scene.key));
+    }
+  }, []);
+
+  // Открытие и закрытие выезжающего меню
+  const toggleDrawer = () => setDrawerVisible(!drawerVisible);
 
   const handleNewScene = () => {
     const newScene = `Сцена ${sceneTabs.length + 1}`;
+    const newSceneData = { sceneName: newScene, objects: [], settings: {} };
+
     setSceneTabs((prevTabs) => [...prevTabs, newScene]);
     setActiveScene(newScene);
     setEditorTabs((prevTabs) => ({ ...prevTabs, [newScene]: 'levelEditor' }));
+
+    saveSceneData(newScene, newSceneData);
+
+    const projectData = loadProjectData();
+    if (projectData) {
+      projectData.scenes.push(newScene);
+      saveProjectData(projectData);
+    }
+
+    const updatedOpenScenes = [...sceneTabs, newScene].map((title) => ({
+      title,
+      key: title,
+      state: editorTabs[title] || 'levelEditor',
+    }));
+    updateOpenedScenes(updatedOpenScenes);
   };
 
   const handleRemoveScene = (tab: string) => {
     setSceneTabs((prevTabs) => prevTabs.filter((t) => t !== tab));
+    deleteSceneData(tab);
+
     if (activeScene === tab && sceneTabs.length > 1) {
       setActiveScene(sceneTabs[0]);
     }
+
+    const updatedOpenScenes = sceneTabs.filter((t) => t !== tab).map((title) => ({
+      title,
+      key: title,
+      state: editorTabs[title] || 'levelEditor',
+    }));
+    updateOpenedScenes(updatedOpenScenes);
   };
 
   const handleSceneChange = (tab: string) => {
@@ -48,22 +88,23 @@ const App: React.FC = () => {
 
   const handleEditorTabChange = (key: string) => {
     setEditorTabs((prevTabs) => ({ ...prevTabs, [activeScene]: key }));
+
+    const updatedOpenScenes = sceneTabs.map((title) => ({
+      title,
+      key: title,
+      state: editorTabs[title] || 'levelEditor',
+    }));
+    updateOpenedScenes(updatedOpenScenes);
   };
 
   const handleSaveProject = () => {
-    const projectData = createNewProject();
-    saveProjectToTetteFile(projectData);
-  };
-
-  const handleExportProject = () => {
-    const projectData = createNewProject();
-    exportProjectToZip(projectData);
+    const projectData = loadProjectData();
+    if (projectData) saveProjectData(projectData);
   };
 
   const projectMenuItems = [
     { label: 'Создать сцену', key: 'newScene', onClick: handleNewScene },
     { label: 'Сохранить проект', key: 'save', onClick: handleSaveProject },
-    { label: 'Экспортировать проект', key: 'export', onClick: handleExportProject },
   ];
 
   const editMenuItems = [
@@ -78,38 +119,25 @@ const App: React.FC = () => {
 
   return (
     <Layout style={{ height: '100vh', background: '#1c1c1c' }}>
-      <Header
-        style={{
-          background: '#1f1f1f',
-          padding: '0 16px',
-          display: 'flex',
-          alignItems: 'center',
-          height: '50px',
-        }}
-      >
+      {/* Верхний Header с меню и вкладками */}
+      <Header style={{ background: '#1f1f1f', padding: '0 16px', display: 'flex', height: '60px' }}>
         <Dropdown menu={{ items: projectMenuItems }} trigger={['click']}>
           <Space>
-            <Button type="text" style={{ color: 'white' }}>
-              Проект
-            </Button>
+            <Button type="text" style={{ color: 'white' }}>Проект</Button>
             <DownOutlined />
           </Space>
         </Dropdown>
 
         <Dropdown menu={{ items: editMenuItems }} trigger={['click']}>
           <Space>
-            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>
-              Правка
-            </Button>
+            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>Правка</Button>
             <DownOutlined />
           </Space>
         </Dropdown>
 
         <Dropdown menu={{ items: aboutMenuItems }} trigger={['click']}>
           <Space>
-            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>
-              О программе
-            </Button>
+            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>О программе</Button>
             <DownOutlined />
           </Space>
         </Dropdown>
@@ -123,34 +151,47 @@ const App: React.FC = () => {
         />
       </Header>
 
+      {/* Разделенный Header с управлением */}
       <Header
         style={{
           background: '#1f1f1f',
           padding: '0 16px',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           height: '48px',
         }}
       >
         <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={handleNewScene}
-          style={{ marginRight: '16px' }}
-        >
-          New Scene
-        </Button>
-        <Button
-          type="default"
-          icon={<SaveOutlined />}
-          style={{ marginRight: '16px' }}
-          onClick={handleSaveProject}
-        >
-          Save
-        </Button>
-        <Button type="primary" icon={<PlayCircleOutlined />}>
-          Run Game
-        </Button>
+          type="text"
+          icon={<MenuOutlined />}
+          onClick={toggleDrawer}
+          style={{ color: 'white' }}
+        />
+
+        <Space>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleNewScene}
+            style={{ marginRight: '16px' }}
+          >
+            New Scene
+          </Button>
+          <Button
+            type="default"
+            icon={<SaveOutlined />}
+            onClick={handleSaveProject}
+            style={{ marginRight: '16px' }}
+          >
+            Save
+          </Button>
+          <Button type="primary" icon={<PlayCircleOutlined />}>
+            Run Game
+          </Button>
+        </Space>
+
+        <div style={{ width: '48px' }} />
       </Header>
 
       <Layout>
@@ -176,6 +217,18 @@ const App: React.FC = () => {
           )}
         </Content>
       </Layout>
+
+      {/* Выезжающее меню для редактирования параметров */}
+      <Drawer
+        title="Параметры проекта"
+        placement={drawerPlacement}
+        onClose={toggleDrawer}
+        open={drawerVisible}
+      >
+        <p>Здесь можно редактировать параметры проекта.</p>
+
+
+      </Drawer>
     </Layout>
   );
 };

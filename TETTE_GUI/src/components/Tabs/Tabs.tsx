@@ -1,7 +1,6 @@
-// components/Tabs.tsx
-
 import React from 'react';
 import { CloseOutlined } from '@ant-design/icons';
+import './Tabs.scss';
 
 interface TabsProps {
   tabs: string[];
@@ -11,43 +10,19 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabClick, onRemoveTab }) => {
-  // Максимальная и минимальная ширина вкладки
   const maxTabWidth = 150;
-  const minTabWidth = 80;
-
-  // Рассчитываем ширину каждой вкладки в зависимости от их количества
-  const containerWidth = 1000; // Задаем фиксированную ширину контейнера, или можно вычислять динамически
+  const minTabWidth = 90;
+  const containerWidth = 1000;
   const tabWidth = Math.max(minTabWidth, Math.min(maxTabWidth, containerWidth / tabs.length));
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: '#2e2e2e',
-        borderRadius: '4px',
-        padding: '8px',
-        color: 'white',
-        flex: 1,
-      }}
-    >
+    <div className="tabs-container">
       {tabs.map((tab) => (
         <div
           key={tab}
+          className={`tab ${activeTab === tab ? 'tab--active' : ''}`}
           onClick={() => onTabClick(tab)}
-          style={{
-            width: `${tabWidth}px`, // Динамическая ширина вкладки
-            padding: '8px 16px',
-            marginRight: '8px',
-            cursor: 'pointer',
-            color: activeTab === tab ? '#0958d9' : 'white',
-            backgroundColor: activeTab === tab ? '#1f1f1f' : 'transparent',
-            borderRadius: '4px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexShrink: 0, // Запрещаем уменьшение ширины вкладок
-          }}
+          style={{ width: `${tabWidth}px` }}
         >
           {tab}
           <CloseOutlined
@@ -55,7 +30,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabClick, onRemoveTab })
               e.stopPropagation();
               onRemoveTab(tab);
             }}
-            style={{ fontSize: '12px', color: '#ff4d4f', marginLeft: '8px' }}
+            className="close-icon"
           />
         </div>
       ))}
