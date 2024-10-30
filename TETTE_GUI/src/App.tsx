@@ -1,10 +1,10 @@
 // App.tsx
 
 import React, { useState, useEffect } from 'react';
-import { Layout, Button, Dropdown, Space, Drawer, Radio } from 'antd';
+import { Layout, Button, Dropdown, Space, Drawer } from 'antd';
 import { DownOutlined, PlusOutlined, SaveOutlined, PlayCircleOutlined, MenuOutlined } from '@ant-design/icons';
-import LevelEditorContent from './components/LogicEditor/LogicEditorContent';
-import LogicEditorContent from './components/SceneEditor/SceneEditorContent';
+import LogicEditorContent from './components/LogicEditor/LogicEditorContent';
+import SceneEditorContent from './components/SceneEditor/SceneEditorContent';
 import Tabs from './components/Tabs/Tabs';
 
 import {
@@ -12,7 +12,6 @@ import {
   loadProjectData,
   saveSceneData,
   loadSceneData,
-  deleteSceneData,
   updateOpenedScenes,
   loadOpenedScenes,
 } from './utils/storageUtils';
@@ -26,16 +25,35 @@ const App: React.FC = () => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [drawerPlacement, setDrawerPlacement] = useState<'left' | 'right' | 'top' | 'bottom'>('left');
 
-  // Загрузка данных при инициализации
+  // Инициализация проекта при загрузке
   useEffect(() => {
     const projectData = loadProjectData();
-    if (projectData) {
+    const openScenes = loadOpenedScenes();
+
+    if (projectData && projectData.scenes.length > 0) {
       setSceneTabs(projectData.scenes);
     }
 
-    const openScenes = loadOpenedScenes();
-    if (openScenes.length) {
-      setSceneTabs(openScenes.map((scene) => scene.key));
+    if (openScenes.length > 0) {
+      setActiveScene(openScenes[0]?.key || '');
+      const editorStates: { [key: string]: string } = {};
+      openScenes.forEach((scene) => {
+        editorStates[scene.key] = scene.state;
+      });
+      setEditorTabs(editorStates);
+    } else if (projectData && projectData.scenes.length > 0) {
+      // Если есть сохраненные сцены, но нет открытых сцен, открываем первую сцену
+      setActiveScene(projectData.scenes[0]);
+      updateOpenedScenes([
+        {
+          title: projectData.scenes[0],
+          key: projectData.scenes[0],
+          state: 'levelEditor',
+        },
+      ]);
+    } else {
+      // Если нет сохраненных сцен, создаем новую
+      handleNewScene();
     }
   }, []);
 
@@ -43,63 +61,90 @@ const App: React.FC = () => {
   const toggleDrawer = () => setDrawerVisible(!drawerVisible);
 
   const handleNewScene = () => {
+    // Создание новой сцены
     const newScene = `Сцена ${sceneTabs.length + 1}`;
     const newSceneData = { sceneName: newScene, objects: [], settings: {} };
 
-    setSceneTabs((prevTabs) => [...prevTabs, newScene]);
+    // Добавляем новую сцену в `sceneTabs`
+    const updatedSceneTabs = [...sceneTabs, newScene];
+    setSceneTabs(updatedSceneTabs);
     setActiveScene(newScene);
     setEditorTabs((prevTabs) => ({ ...prevTabs, [newScene]: 'levelEditor' }));
 
+    // Сохранение данных новой сцены
     saveSceneData(newScene, newSceneData);
 
-    const projectData = loadProjectData();
-    if (projectData) {
-      projectData.scenes.push(newScene);
-      saveProjectData(projectData);
-    }
+    // Обновление `projectData` с новой сценой
+    const projectData = loadProjectData() || { scenes: [] };
+    projectData.scenes = updatedSceneTabs;
+    saveProjectData(projectData);
 
-    const updatedOpenScenes = [...sceneTabs, newScene].map((title) => ({
-      title,
-      key: title,
-      state: editorTabs[title] || 'levelEditor',
-    }));
+    // Обновляем список открытых сцен и сохраняем его
+    const openedScenes = loadOpenedScenes();
+    const updatedOpenScenes = [
+      ...openedScenes,
+      {
+        title: newScene,
+        key: newScene,
+        state: 'levelEditor',
+      },
+    ];
     updateOpenedScenes(updatedOpenScenes);
   };
 
   const handleRemoveScene = (tab: string) => {
-    setSceneTabs((prevTabs) => prevTabs.filter((t) => t !== tab));
-    deleteSceneData(tab);
+    // Удаляем сцену из открытых вкладок
+    const updatedOpenScenes = loadOpenedScenes().filter((scene) => scene.key !== tab);
+    updateOpenedScenes(updatedOpenScenes);
 
-    if (activeScene === tab && sceneTabs.length > 1) {
-      setActiveScene(sceneTabs[0]);
+    // Обновляем состояние открытых вкладок
+    if (activeScene === tab && updatedOpenScenes.length > 0) {
+      setActiveScene(updatedOpenScenes[0].key);
+    } else if (updatedOpenScenes.length === 0) {
+      setActiveScene('');
+    } else {
+      setActiveScene(activeScene);
     }
 
-    const updatedOpenScenes = sceneTabs.filter((t) => t !== tab).map((title) => ({
-      title,
-      key: title,
-      state: editorTabs[title] || 'levelEditor',
-    }));
-    updateOpenedScenes(updatedOpenScenes);
+    // Обновляем editorTabs
+    setEditorTabs((prevTabs) => {
+      const newTabs = { ...prevTabs };
+      delete newTabs[tab];
+      return newTabs;
+    });
   };
 
   const handleSceneChange = (tab: string) => {
     setActiveScene(tab);
+
+    // Проверяем, есть ли сцена в открытых вкладках, если нет, добавляем
+    const openedScenes = loadOpenedScenes();
+    if (!openedScenes.find((scene) => scene.key === tab)) {
+      const updatedOpenScenes = [
+        ...openedScenes,
+        {
+          title: tab,
+          key: tab,
+          state: editorTabs[tab] || 'levelEditor',
+        },
+      ];
+      updateOpenedScenes(updatedOpenScenes);
+    }
   };
 
   const handleEditorTabChange = (key: string) => {
     setEditorTabs((prevTabs) => ({ ...prevTabs, [activeScene]: key }));
 
-    const updatedOpenScenes = sceneTabs.map((title) => ({
-      title,
-      key: title,
-      state: editorTabs[title] || 'levelEditor',
-    }));
-    updateOpenedScenes(updatedOpenScenes);
+    const openedScenes = loadOpenedScenes().map((scene) =>
+      scene.key === activeScene ? { ...scene, state: key } : scene
+    );
+    updateOpenedScenes(openedScenes);
   };
 
   const handleSaveProject = () => {
-    const projectData = loadProjectData();
-    if (projectData) saveProjectData(projectData);
+    const projectData = loadProjectData() || { scenes: [] };
+    projectData.scenes = sceneTabs;
+    saveProjectData(projectData);
   };
 
   const projectMenuItems = [
@@ -123,27 +168,33 @@ const App: React.FC = () => {
       <Header style={{ background: '#1f1f1f', padding: '0 16px', display: 'flex', height: '60px' }}>
         <Dropdown menu={{ items: projectMenuItems }} trigger={['click']}>
           <Space>
-            <Button type="text" style={{ color: 'white' }}>Проект</Button>
+            <Button type="text" style={{ color: 'white' }}>
+              Проект
+            </Button>
             <DownOutlined />
           </Space>
         </Dropdown>
 
         <Dropdown menu={{ items: editMenuItems }} trigger={['click']}>
           <Space>
-            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>Правка</Button>
+            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>
+              Правка
+            </Button>
             <DownOutlined />
           </Space>
         </Dropdown>
 
         <Dropdown menu={{ items: aboutMenuItems }} trigger={['click']}>
           <Space>
-            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>О программе</Button>
+            <Button type="text" style={{ color: 'white', marginLeft: '16px' }}>
+              О программе
+            </Button>
             <DownOutlined />
           </Space>
         </Dropdown>
 
         <Tabs
-          tabs={sceneTabs}
+          tabs={loadOpenedScenes().map((scene) => scene.key)}
           activeTab={activeScene}
           onTabClick={handleSceneChange}
           onAddTab={handleNewScene}
@@ -162,12 +213,7 @@ const App: React.FC = () => {
           height: '48px',
         }}
       >
-        <Button
-          type="text"
-          icon={<MenuOutlined />}
-          onClick={toggleDrawer}
-          style={{ color: 'white' }}
-        />
+        <Button type="text" icon={<MenuOutlined />} onClick={toggleDrawer} style={{ color: 'white' }} />
 
         <Space>
           <Button
@@ -211,7 +257,7 @@ const App: React.FC = () => {
             </Button>
           </div>
           {editorTabs[activeScene] === 'levelEditor' ? (
-            <LevelEditorContent scene={activeScene} />
+            <SceneEditorContent scene={activeScene} />
           ) : (
             <LogicEditorContent scene={activeScene} />
           )}
@@ -226,8 +272,6 @@ const App: React.FC = () => {
         open={drawerVisible}
       >
         <p>Здесь можно редактировать параметры проекта.</p>
-
-
       </Drawer>
     </Layout>
   );
