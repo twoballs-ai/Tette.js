@@ -17,19 +17,19 @@ export class CanvasRenderer extends Renderer {
   }
 
   // Рендерим объекты сцены
-  render(scene) {
-    this.clear();
-
-    // Рендерим объекты сцены
-    if (scene && scene.gameObjects) {
-      scene.gameObjects.forEach(entity => {
-        this.drawEntity(entity);
-      });
-    } else {
-      console.error("No game objects found in the scene!");
-    }
-  }
-
+  // render(scene) {
+  //   console.log("sss")
+  //   this.clear(); // Очищаем экран перед отрисовкой
+  
+  //   // Рендерим объекты текущей сцены
+  //   if (scene && scene.gameObjects) {
+  //     scene.gameObjects.forEach(entity => {
+  //       this.drawEntity(entity);
+  //     });
+  //   } else {
+  //     console.error("No game objects found in the scene!");
+  //   }
+  // }
   // Рендеринг конкретного объекта
   drawEntity(entity) {
     // Если объект имеет метод render, вызываем его
