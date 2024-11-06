@@ -1,28 +1,43 @@
 import { GameObject } from '../gameObject.js';
-
 export class Sprite extends GameObject {
-    constructor(image, x, y, width, height, preserveAspectRatio = false) {
-        super(x, y, width, height);
-        this.image = image;
-        this.preserveAspectRatio = preserveAspectRatio;
-    } 
+  constructor(params) {
+    super({
+      x: params.x,
+      y: params.y,
+      width: params.width,
+      height: params.height,
+      color: null, // Цвет можно задать null, так как это спрайт
+      enablePhysics: params.enablePhysics || false,
+      isStatic: params.isStatic || false,
+      layer: params.layer || 0  // Добавляем слой рендеринга
+    });
 
-    // Метод для рендеринга спрайта
-    render(context) {
-        if (this.image.complete) { // Проверяем, загружено ли изображение
-            let renderWidth = this.width;
-            let renderHeight = this.height;
+    this.image = params.image;
+    this.preserveAspectRatio = params.preserveAspectRatio || false;
+  }
 
-            if (this.preserveAspectRatio) {
-                const aspectRatio = this.image.width / this.image.height;
-                if (this.width / this.height > aspectRatio) {
-                    renderWidth = this.height * aspectRatio;
-                } else {
-                    renderHeight = this.width / aspectRatio;
-                }
-            }
-
-            context.drawImage(this.image, this.x, this.y, renderWidth, renderHeight);
-        }
+  update(deltaTime) {
+    if (this.rigidBody) {
+      this.x = this.rigidBody.x;
+      this.y = this.rigidBody.y;
     }
+  }
+
+  render(context) {
+    if (this.image.complete) {
+      let renderWidth = this.width;
+      let renderHeight = this.height;
+
+      if (this.preserveAspectRatio) {
+        const aspectRatio = this.image.width / this.image.height;
+        if (this.width / this.height > aspectRatio) {
+          renderWidth = this.height * aspectRatio;
+        } else {
+          renderHeight = this.width / aspectRatio;
+        }
+      }
+
+      context.drawImage(this.image, this.x, this.y, renderWidth, renderHeight);
+    }
+  }
 }

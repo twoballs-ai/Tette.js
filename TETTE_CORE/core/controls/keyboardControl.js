@@ -1,25 +1,19 @@
 export class KeyboardControl {
-    constructor() {
-        this.keys = {};
-        this.setupKeyboardControls();
-    }
+  constructor() {
+    this.keysPressed = {};
+    this.initEventListeners();
+  }
 
-    setupKeyboardControls() {
-        window.addEventListener('keydown', (event) => {
-            this.keys[event.code] = true; // Отмечаем, что клавиша нажата
-        });
+  initEventListeners() {
+    window.addEventListener('keydown', (e) => {
+      this.keysPressed[e.key] = true;
+    });
+    window.addEventListener('keyup', (e) => {
+      this.keysPressed[e.key] = false;
+    });
+  }
 
-        window.addEventListener('keyup', (event) => {
-            this.keys[event.code] = false; // Отмечаем, что клавиша отпущена
-        });
-    }
-
-    // Проверяем, нажата ли клавиша
-    isKeyPressed(key) {
-        return !!this.keys[key];
-    }
-
-    update() {
-        // Логика для обновления состояния клавиатуры
-    }
+  isKeyPressed(key) {
+    return this.keysPressed[key] || false;
+  }
 }
